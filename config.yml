@@ -1,0 +1,72 @@
+app:
+  name: EdgeSys
+  version: 1.0.0
+  
+server:
+  # debug release test
+  model: debug
+  port: 39999
+  # iothub服务端口  使用的rpc端口  9000 9001 可能与minio端口冲突
+  grpc-port: 9001
+  http-port: 9002
+  tcp-port: 9003
+  cors: true
+  # 数据上报 队列池
+  queue-num: 1000
+  # 接口限流
+  rate:
+    enable: true
+    rate-num: 100
+  db-type: mysql
+  # 是否开启数据库表初始化
+  isInitTable: false
+  excel-dir: ./resource/excel/
+  tls:
+    enable: false
+    key-file: ./resource/default.key
+    cert-file: ./resource/default.pem
+jwt:
+  key: EdgeSys
+  # 过期时间单位秒 7天
+  expire-time: 604800
+#数据上报并发识别任务数量限制
+queue:
+  enable: false
+  num: 3000
+
+redis:
+  host: 127.0.0.1
+#  password: root
+  port: 6379
+
+mysql:
+  host: 127.0.0.1:33306
+  username: root
+  password: 123456
+  db-name: edge_sys
+  config: charset=utf8&loc=Local&parseTime=true
+
+postgresql:
+  username: postgres
+  password: 123456
+  host: 127.0.0.1
+  port: 5432
+  db-name: edge_sys
+  max-idle-conns: 10
+  max-open-conns: 10
+
+casbin:
+  model-path: './resource/rbac_model.conf'
+
+gen:
+  # 代码生成读取的数据库名称
+  dbname: edge_sys
+  # 代码生成是使用前端代码存放位置，需要指定到src文件夹，相对路径
+  frontpath: ../EdgeSysUi/src
+
+log:
+  # 日志等级, trace, debug, info, warn, error, fatal
+  level: debug
+#  file:
+#    path: ./
+#    name: edge_sys_log.log

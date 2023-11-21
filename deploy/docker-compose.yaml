@@ -1,0 +1,69 @@
+version: '3.2'
+networks:
+  aurine:
+services:
+  edge-mysql:
+    image: '10.110.18.200:9222/common-ms/mysql:8.0'
+    container_name: pigx-mysql
+    restart: always
+#    networks:
+#      - aurine
+    network_mode: host
+#    ports:
+#      - "3306:3306"
+    volumes:
+      #- "../Auedge/msc/mysql/conf:/etc/mysql/conf.d"
+      - "../Auedge/msc/mysql/conf/my.cnf:/etc/my.cnf"
+      - "../Auedge/msc/mysql/data:/var/lib/mysql"
+      #- "/var/lib/mysql/mysql.sock:/var/lib/mysql/mysql.sock"
+      - "/etc/localtime:/etc/localtime"
+      #- "../Auedge/msc/mysql/init:/docker-entrypoint-initdb.d"
+      #- "../Auedge/msc/mysql/init:/initdb.d"
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+#    healthcheck:
+#      disable: false
+#      test: ["CMD-SHELL","healthcheck.sh"]
+#      interval: 10s
+#      timeout: 10s
+#      retries: 10
+#      start_period: 10s
+  edge-redis:
+    image: '10.110.18.200:9222/common-ms/redis:6.2.6'
+    container_name: pigx-redis
+    restart: always
+#    networks:
+#      - aurine
+    network_mode: host
+#    ports:
+#      - "6379:6379"
+#    depends_on:
+#      edge-mysql:
+#        condition: service_healthy
+    volumes:
+      - "../Auedge/msc/redis/data:/data"
+      - "/etc/localtime:/etc/localtime"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+  edge-sys:
+    image: '10.110.18.200:9222/edge-mini/2.0/edgesys:v0.1'
+    container_name: edge-sys
+    restart: always
+    depends_on:
+      - edge-mysql
+      - edge-redis
+    ports:
+      - "39999:39999"
+      - "9001:9001"
+      - "9002:9002"
+      - "9003:9003"
+      - "9003:9003/udp"
+  edge-sys-web:
+    image: '10.110.18.200:9222/edge-mini/2.0/edgesysweb:v0.1'
+    container_name: edge-sys-web
+    restart: always
+    ports:
+      - "80:30080"

@@ -1,22 +1,22 @@
 package main
 
 import (
+	"EdgeSys/db"
 	"EdgeSys/pkg/cache"
 	"EdgeSys/pkg/config"
 	"EdgeSys/pkg/global"
 	"EdgeSys/pkg/initialize"
 	"EdgeSys/pkg/middleware"
 	"context"
-	"log"
-	"os"
-	"os/signal"
-	"syscall"
-
 	"github.com/PandaXGO/PandaKit/logger"
 	"github.com/PandaXGO/PandaKit/rediscli"
 	"github.com/PandaXGO/PandaKit/restfulx"
 	"github.com/PandaXGO/PandaKit/starter"
 	"github.com/spf13/cobra"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 var (
@@ -40,7 +40,7 @@ var rootCmd = &cobra.Command{
 				dbGorm.MaxIdleConns = global.Conf.Postgresql.MaxIdleConns
 				dbGorm.MaxOpenConns = global.Conf.Postgresql.MaxOpenConns
 			}
-			global.Db = dbGorm.GormInit()
+			global.Db = db.GormInit(&dbGorm)
 			global.Log.Infof("%s连接成功", global.Conf.Server.DbType)
 			client, err := rediscli.NewRedisClient(global.Conf.Redis.Host, global.Conf.Redis.Password, global.Conf.Redis.Port, global.Conf.Redis.Db)
 			if err != nil {

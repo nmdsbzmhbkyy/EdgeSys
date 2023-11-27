@@ -28,6 +28,7 @@
                   v-for="dict in state.{{$column.JsonField}}Options"
                   :key="dict.dictValue"
                   :label="dict.dictLabel"
+                  :value="dict.dictValue"
               >{{"{{"}} dict.dictLabel {{"}}"}}</el-option>
           </el-select>
        </el-form-item>

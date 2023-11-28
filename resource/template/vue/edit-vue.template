@@ -18,7 +18,7 @@
       </el-form-item>
       {{- else if eq $column.HtmlType "switch" }}
       <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.JsonField}}">
-          <el-switch v-model="state.ruleForm.{{$column.HtmlField}}" />
+          <el-switch v-model="state.ruleForm.{{$column.JsonField}}" />
       </el-form-item>
       {{- else if eq $column.HtmlType "select" }}
       {{if ne $column.DictType ""}}
@@ -40,7 +40,7 @@
               <el-radio
                v-for="dict in state.{{$column.JsonField}}Options"
                :key="dict.dictValue"
-               :label="dict.dictLabel"
+               :label="dict.dictValue"
               >{{"{{"}} dict.dictLabel {{"}}"}}</el-radio>
           </el-radio-group>
       </el-form-item>
@@ -55,7 +55,7 @@
       </el-form-item>
       {{- else if eq $column.HtmlType "textarea" -}}
       <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.JsonField}}">
-          <el-input v-model="state.ruleForm.{{$column.HtmlField}}" type="textarea" placeholder="请输入{{$column.ColumnComment}}" />
+          <el-input v-model="state.ruleForm.{{$column.JsonField}}" type="textarea" placeholder="请输入{{$column.ColumnComment}}" />
       </el-form-item>
       {{- else if eq $column.HtmlType "checkbox" }}
        <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.JsonField}}">
@@ -63,7 +63,7 @@
              <el-checkbox
                v-for="dict in state.{{$column.JsonField}}Options"
                :key="dict.dictValue"
-               :label="dict.dictLabel"
+               :label="dict.dictValue"
              >{{"{{"}} dict.dictLabel {{"}}"}}</el-checkbox>
           </el-checkbox-group>
        </el-form-item>

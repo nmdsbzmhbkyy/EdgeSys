@@ -18,7 +18,7 @@
       </el-form-item>
       {{- else if eq $column.HtmlType "switch" }}
       <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.JsonField}}">
-          <el-switch v-model="state.ruleForm.{{$column.JsonField}}" />
+          <el-switch v-model="state.ruleForm.{{$column.JsonField}}" :active-value="'1'" :inactive-value="'0'"/>
       </el-form-item>
       {{- else if eq $column.HtmlType "select" }}
       {{if ne $column.DictType ""}}

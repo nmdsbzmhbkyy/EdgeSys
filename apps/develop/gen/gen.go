@@ -309,17 +309,6 @@ func (s *toolsGenTableColumn) GenTableInit(tableName string) entity.DevGenTable 
 					column.HtmlType = "switch"
 				}
 			}
-			// 是主键的时候
-			if strings.Contains(dbColumn[y].ColumnKey, "PR") {
-				column.IsPk = "1"
-				data.PkColumn = dbColumn[y].ColumnName
-				data.PkGoField = column.GoField
-				data.PkGoType = column.GoType
-				data.PkJsonField = column.JsonField
-				if dbColumn[y].Extra == "auto_increment" {
-					column.IsIncrement = "1"
-				}
-			}
 			//新增字段
 			if s.IsNotEdit(column.ColumnName) {
 				column.IsRequired = "0"
@@ -366,6 +355,20 @@ func (s *toolsGenTableColumn) GenTableInit(tableName string) entity.DevGenTable 
 			} else if s.CheckTypeColumn(column.ColumnName) || s.CheckSexColumn(column.ColumnName) {
 				// 类型&性别字段设置下拉框
 				column.HtmlType = "select"
+			}
+			// 是主键的时候
+			if strings.Contains(dbColumn[y].ColumnKey, "PR") {
+				column.IsPk = "1"
+				data.PkColumn = dbColumn[y].ColumnName
+				data.PkGoField = column.GoField
+				data.PkGoType = column.GoType
+				data.PkJsonField = column.JsonField
+				if dbColumn[y].Extra == "auto_increment" {
+					column.IsIncrement = "1"
+				}
+				// 主键生成代码的时候不需要页面展示和查询
+				column.IsList = "0"
+				column.IsQuery = "0"
 			}
 			global.Log.Info(y)
 			data.Columns = append(data.Columns, column)

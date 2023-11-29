@@ -67,6 +67,22 @@
              >{{"{{"}} dict.dictLabel {{"}}"}}</el-checkbox>
           </el-checkbox-group>
        </el-form-item>
+      {{- else if eq $column.HtmlType "file" }}
+       <el-form-item label="{{$column.ColumnComment}}">
+          <el-upload
+            drag
+            :action="state.url"
+            :headers="state.headers"
+            :auto-upload="true"
+            :on-exceed="handleLimit"
+            :on-success="handleUplaodSuccess"
+          >
+            <SvgIcon name="elementPlus"/>
+            <div class="el-upload__text">
+              拖拽文件到这或 <em>点击文件上传</em>
+            </div>
+          </el-upload>
+       </el-form-item>
       {{- end -}}
       {{- end -}}
       {{- end }}
@@ -117,6 +133,11 @@ const state = reactive({
   // {{$column.JsonField}}Options字典数据
   {{$column.JsonField}}Options: [],
   {{- end -}}
+  //上传文件
+  {{- if eq $column.HtmlType "file" }}
+    url:'',
+    headers: {},
+  {{- end -}}
   {{- end }}
   // 表单校验
   ruleRules: {
@@ -132,10 +153,13 @@ const state = reactive({
 // 打开弹窗
 const openDialog = (row: any) => {
   state.ruleForm = JSON.parse(JSON.stringify(row));
-
   state.isShowDialog = true;
   state.loading = false;
  {{- range $index, $column := .Columns -}}
+ {{- if eq $column.HtmlType "file" }}
+  state.url = ''
+  state.headers = {}
+ {{- end -}}
  {{- if ne $column.DictType "" }}
  proxy.getDicts("{{$column.DictType}}").then((response: any) => {
      state.{{$column.JsonField}}Options = response.data;
@@ -153,6 +177,20 @@ const closeDialog = (row?: object) => {
 const onCancel = () => {
   closeDialog();
 };
+//文件上传限制
+const handleLimit = (e: any) => {
+  if (e.length > state.limit) {
+    ElMessage.warning(`最大单次只可上传${state.limit}条`);
+  }
+};
+//文件上传成功
+const handleUplaodSuccess = (res: any, file: any) => {
+  if (res.code == 200) {
+    ElMessage.success(`文件上传成功，路径为${res.data}`);
+  } else {
+    ElMessage.error(`文件上传失败`);
+  }
+}
 
 // 保存
 const onSubmit = () => {

@@ -147,7 +147,7 @@ func (m *devTableColumnModelImpl) FindList(data entity.DevGenTableColumn, exclud
 		notIn = append(notIn, "delete_time")
 		db = db.Where("column_name not in(?)", notIn)
 	}
-	err := db.Find(&list).Error
+	err := db.Order("sort asc").Find(&list).Error
 	biz.ErrIsNil(err, "查询生成代码字段表信息失败")
 	return &list
 }

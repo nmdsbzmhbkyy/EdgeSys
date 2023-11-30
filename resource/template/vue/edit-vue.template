@@ -133,8 +133,9 @@ const state = reactive({
   // {{$column.JsonField}}Options字典数据
   {{$column.JsonField}}Options: [],
   {{- end -}}
-  //上传文件
   {{- if eq $column.HtmlType "file" }}
+  //上传文件
+    limit:10,
     url:'',
     headers: {},
   {{- end -}}

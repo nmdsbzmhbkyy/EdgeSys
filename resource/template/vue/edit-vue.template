@@ -135,9 +135,9 @@ const state = reactive({
   {{- end -}}
   {{- if eq $column.HtmlType "file" }}
   //上传文件
-    limit:10,
-    url:'',
-    headers: {},
+  limit:10,
+  url:'',
+  headers: {},
   {{- end -}}
   {{- end }}
   // 表单校验
@@ -178,6 +178,8 @@ const closeDialog = (row?: object) => {
 const onCancel = () => {
   closeDialog();
 };
+{{- range $index, $column := .Columns -}}
+{{- if eq $column.HtmlType "file" }}
 //文件上传限制
 const handleLimit = (e: any) => {
   if (e.length > state.limit) {
@@ -192,7 +194,8 @@ const handleUplaodSuccess = (res: any, file: any) => {
     ElMessage.error(`文件上传失败`);
   }
 }
-
+{{- end -}}
+{{- end }}
 // 保存
 const onSubmit = () => {
   const formWrap = unref(ruleFormRef) as any;

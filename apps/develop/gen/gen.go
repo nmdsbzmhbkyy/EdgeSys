@@ -58,6 +58,37 @@ func (s *toolsGenTableColumn) IsExistInArray(value string, array []string) bool 
 	return false
 }
 
+// filedTypeIsExistInArray 判断 数据库字段类型是否在切片中
+func (s *toolsGenTableColumn) filedTypeIsExistInArray(value string, array []string) bool {
+	for _, v := range array {
+		if v == RemoveParentheses(value) {
+			return true
+		}
+	}
+	return false
+}
+
+// RemoveParentheses 获取字段去除括号的部分
+func RemoveParentheses(fieldType string) string {
+	// 找到字符串中第一个括号的位置
+	openIndex := strings.Index(fieldType, "(")
+	if openIndex == -1 {
+		// 如果没有找到括号，则返回原始字符串
+		return fieldType
+	}
+
+	// 找到字符串中最后一个括号的位置
+	closeIndex := strings.Index(fieldType, ")")
+	if closeIndex == -1 {
+		// 如果没有找到括号，则返回原始字符串
+		return fieldType
+	}
+
+	// 截取字符串，去除括号部分
+	filteredFieldType := fieldType[:openIndex] + fieldType[closeIndex+1:]
+	return filteredFieldType
+}
+
 // GetColumnLength 获取字段长度
 func (s *toolsGenTableColumn) GetColumnLength(columnType string) int {
 	start := strings.Index(columnType, "(")
@@ -72,17 +103,17 @@ func (s *toolsGenTableColumn) GetColumnLength(columnType string) int {
 
 // IsStringObject 判断是否是数据库字符串类型
 func (s *toolsGenTableColumn) IsStringObject(dataType string) bool {
-	return s.IsExistInArray(dataType, s.ColumnTypeStr)
+	return s.filedTypeIsExistInArray(dataType, s.ColumnTypeStr)
 }
 
 // IsTimeObject 判断是否是数据库时间类型
 func (s *toolsGenTableColumn) IsTimeObject(dataType string) bool {
-	return s.IsExistInArray(dataType, s.ColumnTypeTime)
+	return s.filedTypeIsExistInArray(dataType, s.ColumnTypeTime)
 }
 
 // IsNumberObject 是否数字类型
 func (s *toolsGenTableColumn) IsNumberObject(dataType string) bool {
-	return s.IsExistInArray(dataType, s.ColumnTypeNumber)
+	return s.filedTypeIsExistInArray(dataType, s.ColumnTypeNumber)
 }
 
 // IsNotEdit 是否不可编辑
@@ -245,7 +276,12 @@ func (s *toolsGenTableColumn) GenTableInit(tableName string) entity.DevGenTable 
 				if global.Conf.Server.DbType == "postgresql" {
 					t = column.ColumnType
 				} else {
-					t, _ := utils.ReplaceString(`\(.+\)`, "", column.ColumnType)
+					//t, _ := utils.ReplaceString(`\(.+\)`, "", column.ColumnType)
+					if strings.Contains(column.ColumnType, "(") {
+						t, _ = utils.ReplaceString(`\(.+\)`, "", column.ColumnType)
+					} else {
+						t = column.ColumnType
+					}
 					t = strings.Split(strings.TrimSpace(t), " ")[0]
 					t = strings.ToLower(t)
 				}
@@ -271,17 +307,6 @@ func (s *toolsGenTableColumn) GenTableInit(tableName string) entity.DevGenTable 
 				case "bool":
 					column.GoType = "bool"
 					column.HtmlType = "switch"
-				}
-			}
-			// 是主键的时候
-			if strings.Contains(dbColumn[y].ColumnKey, "PR") {
-				column.IsPk = "1"
-				data.PkColumn = dbColumn[y].ColumnName
-				data.PkGoField = column.GoField
-				data.PkGoType = column.GoType
-				data.PkJsonField = column.JsonField
-				if dbColumn[y].Extra == "auto_increment" {
-					column.IsIncrement = "1"
 				}
 			}
 			//新增字段
@@ -330,6 +355,20 @@ func (s *toolsGenTableColumn) GenTableInit(tableName string) entity.DevGenTable 
 			} else if s.CheckTypeColumn(column.ColumnName) || s.CheckSexColumn(column.ColumnName) {
 				// 类型&性别字段设置下拉框
 				column.HtmlType = "select"
+			}
+			// 是主键的时候
+			if strings.Contains(dbColumn[y].ColumnKey, "PR") {
+				column.IsPk = "1"
+				data.PkColumn = dbColumn[y].ColumnName
+				data.PkGoField = column.GoField
+				data.PkGoType = column.GoType
+				data.PkJsonField = column.JsonField
+				if dbColumn[y].Extra == "auto_increment" {
+					column.IsIncrement = "1"
+				}
+				// 主键生成代码的时候不需要页面展示和查询
+				column.IsList = "0"
+				column.IsQuery = "0"
 			}
 			global.Log.Info(y)
 			data.Columns = append(data.Columns, column)

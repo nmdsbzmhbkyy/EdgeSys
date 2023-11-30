@@ -57,7 +57,7 @@ func (g *GenTableApi) GetTableInfo(rc *restfulx.ReqCtx) {
 	dgt := entity.DevGenTable{}
 	dgt.TableId = int64(restfulx.PathParamInt(rc, "tableId"))
 	dgt.RoleId = rc.LoginAccount.RoleId
-	result := g.GenTableApp.FindOne(dgt, true)
+	result := g.GenTableApp.FindOne(dgt, false)
 	rc.ResData = vo.TableInfoVo{
 		List: result.Columns,
 		Info: *result,

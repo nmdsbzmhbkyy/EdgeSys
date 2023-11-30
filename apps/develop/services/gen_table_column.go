@@ -4,8 +4,8 @@ import (
 	"EdgeSys/apps/develop/entity"
 	"EdgeSys/pkg/global"
 	"errors"
-
 	"github.com/PandaXGO/PandaKit/biz"
+	"github.com/fatih/structs"
 )
 
 /**
@@ -147,13 +147,14 @@ func (m *devTableColumnModelImpl) FindList(data entity.DevGenTableColumn, exclud
 		notIn = append(notIn, "delete_time")
 		db = db.Where("column_name not in(?)", notIn)
 	}
-	err := db.Find(&list).Error
+	err := db.Order("sort asc").Find(&list).Error
 	biz.ErrIsNil(err, "查询生成代码字段表信息失败")
 	return &list
 }
 
 func (m *devTableColumnModelImpl) Update(data entity.DevGenTableColumn) *entity.DevGenTableColumn {
-	err := global.Db.Table(m.table).Model(&data).Updates(&data).Error
+	//err := global.Db.Table(m.table).Model(&data).Updates(&data).Error
+	err := global.Db.Table(m.table).Model(&data).Updates(structs.Map(data)).Error
 	biz.ErrIsNil(err, "修改生成代码字段表失败")
 	return &data
 }

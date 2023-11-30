@@ -4,21 +4,32 @@
 // 生成人：{{.FunctionAuthor}}
 // ==========================================================================
 package entity
+import (
+  "github.com/PandaXGO/PandaKit/model"
+  {{$hasGTime:=false}}
+  {{- range $index, $column := .Columns -}}
+  {{- if eq $column.GoType "Time" -}}
+  {{- if ne $column.GoField "CreateTime" }}
+  {{- if ne $column.GoField "UpdateTime" }}
+  {{- if ne $column.GoField "DeleteTime" }}
+  {{$hasGTime = true}}
+  {{- end -}}
+  {{- end -}}
+  {{- end -}}
+  {{- end -}}
+  {{- end -}}
+  {{if $hasGTime -}}"time"{{- end }}
+)
 
-{{$hasGTime:=false}}
-{{- range $index, $column := .Columns -}}
-{{- if eq $column.GoType "Time" -}}
-{{$hasGTime = true}}
-{{- end -}}
-{{- end -}}
-{{if $hasGTime -}}import "time"{{- end }}
 
 type {{.ClassName}} struct {
 	{{- range $index, $column := .Columns}}
 	  {{- if eq $column.GoField "CreateTime" -}}
-       {{- else if eq $column.GoField "UpdateTime" -}}
-       {{- else if eq $column.GoField "DeleteTime" -}}
-       {{- else }}
+      {{- else if eq $column.GoField "UpdateTime" -}}
+      {{- else if eq $column.GoField "DeleteTime" -}}
+      {{- else if eq $column.GoField "CreateBy" -}}
+      {{- else if eq $column.GoField "UpdateBy" -}}
+      {{- else }}
 
     {{- if eq $column.IsPk "1" }}
     {{$column.GoField}}  {{if eq $column.GoType "Time"}}time.Time{{else}}{{$column.GoType}}{{end}}    `gorm:"primary_key;{{if eq $column.IsIncrement "1"}}AUTO_INCREMENT{{end}}" json:"{{$column.JsonField}}"`    // {{$column.ColumnComment}}
@@ -30,6 +41,8 @@ type {{.ClassName}} struct {
     {{- end -}}
     {{- end -}}
     {{end}}
+    CreateBy   string    `json:"createBy" gorm:"type:varchar(64);comment:创建人"`
+    UpdateBy   string    `json:"updateBy" gorm:"type:varchar(64);comment:修改人"`
     model.BaseModel
 }
 

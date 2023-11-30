@@ -65,6 +65,7 @@ func (p *{{.ClassName}}Api) Get{{.ClassName}}(rc *restfulx.ReqCtx) {
 func (p *{{.ClassName}}Api) Insert{{.ClassName}}(rc *restfulx.ReqCtx) {
 	var data entity.{{.ClassName}}
 	restfulx.BindQuery(rc, &data)
+	data.CreateBy = rc.LoginAccount.UserName
 
 	p.{{.ClassName}}App.Insert(data)
 }
@@ -73,6 +74,7 @@ func (p *{{.ClassName}}Api) Insert{{.ClassName}}(rc *restfulx.ReqCtx) {
 func (p *{{.ClassName}}Api) Update{{.ClassName}}(rc *restfulx.ReqCtx) {
 	var data entity.{{.ClassName}}
 	restfulx.BindQuery(rc, &data)
+	data.UpdateBy = rc.LoginAccount.UserName
 
 	p.{{.ClassName}}App.Update(data)
 }

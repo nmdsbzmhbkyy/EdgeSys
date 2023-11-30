@@ -20,7 +20,7 @@ server:
   db-type: mysql
   # 是否开启数据库表初始化
   isInitTable: false
-  excel-dir: ./resource/excel/
+  excel-dir: ../EdgeSys/resource/excel/
   tls:
     enable: false
     key-file: ./resource/default.key

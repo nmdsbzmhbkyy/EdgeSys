@@ -83,3 +83,18 @@ func (p *PostApi) DeletePost(rc *restfulx.ReqCtx) {
 	}
 	p.PostApp.Delete(deList)
 }
+
+// ExportPost 导出岗位
+func (p *PostApi) ExportPost(rc *restfulx.ReqCtx) {
+	filename := restfulx.QueryParam(rc, "filename")
+	postName := restfulx.QueryParam(rc, "postName")
+	postCode := restfulx.QueryParam(rc, "postCode")
+	status := restfulx.QueryParam(rc, "status")
+	post := entity.SysPost{Status: status, PostName: postName, PostCode: postCode}
+
+	list := p.PostApp.FindList(post)
+
+	filename = utils.GetFileName(global.Conf.Server.ExcelDir, filename)
+	utils.InterfaceToExcel(*list, filename)
+	rc.Download(filename)
+}

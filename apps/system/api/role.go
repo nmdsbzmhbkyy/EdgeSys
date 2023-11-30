@@ -62,8 +62,10 @@ func (r *RoleApi) InsertRole(rc *restfulx.ReqCtx) {
 	role.RoleId = insert.RoleId
 	r.RoleMenuApp.Insert(insert.RoleId, role.MenuIds)
 	//添加权限
-	ca := casbin.CasbinS{ModelPath: global.Conf.Casbin.ModelPath}
-	ca.UpdateCasbin(role.RoleKey, role.ApiIds)
+	if len(role.ApiIds) > 0 {
+		ca := casbin.CasbinS{ModelPath: global.Conf.Casbin.ModelPath}
+		ca.UpdateCasbin(role.RoleKey, role.ApiIds)
+	}
 }
 
 // UpdateRole 修改用户角色
@@ -78,8 +80,10 @@ func (r *RoleApi) UpdateRole(rc *restfulx.ReqCtx) {
 	// 添加角色菜单绑定
 	r.RoleMenuApp.Insert(role.RoleId, role.MenuIds)
 	//修改api权限
-	ca := casbin.CasbinS{ModelPath: global.Conf.Casbin.ModelPath}
-	ca.UpdateCasbin(role.RoleKey, role.ApiIds)
+	if len(role.ApiIds) > 0 {
+		ca := casbin.CasbinS{ModelPath: global.Conf.Casbin.ModelPath}
+		ca.UpdateCasbin(role.RoleKey, role.ApiIds)
+	}
 }
 
 // UpdateRoleStatus 修改用户角色状态

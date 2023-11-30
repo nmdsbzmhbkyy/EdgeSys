@@ -114,11 +114,14 @@ func (m *{{.BusinessName}}ModelImpl) FindListPage(page, pageSize int, data entit
     {{- if eq $column.ColumnName "delete_time" }}
     db.Where("delete_time IS NULL")
     {{- end -}}
-    {{- if ne $column.LinkTableName "" }}
+    {{- end}}
+	err := db.Count(&total).Error
+	{{- range $index, $column := .Columns -}}
+	{{- if ne $column.LinkTableName "" }}
     db.Preload("{{$column.LinkTableClass}}")
     {{- end -}}
     {{- end}}
-	err := db.Count(&total).Error
+
 	err = db.Order("create_time").Limit(pageSize).Offset(offset).Find(&list).Error
 	biz.ErrIsNil(err, "查询{{.TableComment}}分页列表失败")
 	return &list, total

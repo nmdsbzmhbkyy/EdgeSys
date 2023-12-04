@@ -27,6 +27,9 @@ func (p *{{.ClassName}}Api) Get{{.ClassName}}List(rc *restfulx.ReqCtx) {
 	{{- if eq $column.IsQuery "1" -}}
 	{{- if eq $column.GoType "string"}}
     data.{{$column.GoField}} = restfulx.QueryParam(rc, "{{$column.JsonField}}")
+    {{- else if eq $column.GoType "Time"}}
+	data.{{$column.GoField}}, _ = time.Parse(time.RFC3339, restfulx.QueryParam(rc, "{{$column.JsonField}}"))
+	data.{{$column.GoField}} = data.{{$column.GoField}}.In(time.Local)
     {{- else if eq $column.GoType "int" }}
     data.{{$column.GoField}} = restfulx.QueryInt(rc, "{{$column.JsonField}}", 0)
     {{- else if eq $column.GoType "int64" }}

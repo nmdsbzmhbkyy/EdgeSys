@@ -5,8 +5,8 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/PandaXGO/PandaKit/logger"
 	"github.com/emicklei/go-restful/v3"
+	"mod.miligc.com/edge-common/CommonKit/logger"
 )
 
 type HttpServer struct {

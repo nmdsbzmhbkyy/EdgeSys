@@ -1,6 +1,6 @@
 package entity
 
-import "github.com/PandaXGO/PandaKit/model"
+import "mod.miligc.com/edge-common/CommonKit/model"
 
 // 组织组织
 type SysOrganization struct {

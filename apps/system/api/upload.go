@@ -7,8 +7,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/PandaXGO/PandaKit/biz"
-	"github.com/PandaXGO/PandaKit/restfulx"
+	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/CommonKit/restfulx"
 )
 
 type UploadApi struct{}

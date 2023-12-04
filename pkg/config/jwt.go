@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/PandaXGO/PandaKit/biz"
+	"mod.miligc.com/edge-common/CommonKit/biz"
 )
 
 type Jwt struct {

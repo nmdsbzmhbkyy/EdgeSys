@@ -2,12 +2,12 @@ package db
 
 import (
 	"database/sql"
-	"github.com/PandaXGO/PandaKit/logger"
-	"github.com/PandaXGO/PandaKit/starter"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	gormlog "gorm.io/gorm/logger"
+	"mod.miligc.com/edge-common/CommonKit/logger"
+	"mod.miligc.com/edge-common/CommonKit/starter"
 	"time"
 )
 

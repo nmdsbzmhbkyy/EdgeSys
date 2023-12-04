@@ -1,6 +1,6 @@
 package entity
 
-import "github.com/PandaXGO/PandaKit/model"
+import "mod.miligc.com/edge-common/CommonKit/model"
 
 type SysPost struct {
 	PostId   int64  `gorm:"primary_key;AUTO_INCREMENT" json:"postId"`

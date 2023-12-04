@@ -7,7 +7,7 @@ import (
 	systemEntity "EdgeSys/apps/system/entity"
 	"EdgeSys/pkg/global"
 
-	"github.com/PandaXGO/PandaKit/biz"
+	"mod.miligc.com/edge-common/CommonKit/biz"
 )
 
 // 初始化时如果没有表创建表

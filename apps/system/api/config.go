@@ -4,10 +4,10 @@ import (
 	entity "EdgeSys/apps/system/entity"
 	services "EdgeSys/apps/system/services"
 
-	"github.com/PandaXGO/PandaKit/biz"
-	"github.com/PandaXGO/PandaKit/model"
-	"github.com/PandaXGO/PandaKit/restfulx"
-	"github.com/PandaXGO/PandaKit/utils"
+	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/CommonKit/model"
+	"mod.miligc.com/edge-common/CommonKit/restfulx"
+	"mod.miligc.com/edge-common/CommonKit/utils"
 )
 
 type ConfigApi struct {

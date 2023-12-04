@@ -6,8 +6,8 @@ import (
 	"EdgeSys/pkg/global/model"
 	"errors"
 
-	"github.com/PandaXGO/PandaKit/biz"
-	"github.com/PandaXGO/PandaKit/utils"
+	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/CommonKit/utils"
 )
 
 /**

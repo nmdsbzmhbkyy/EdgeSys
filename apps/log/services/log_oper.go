@@ -4,7 +4,7 @@ import (
 	"EdgeSys/apps/log/entity"
 	"EdgeSys/pkg/global"
 
-	"github.com/PandaXGO/PandaKit/biz"
+	"mod.miligc.com/edge-common/CommonKit/biz"
 )
 
 type (

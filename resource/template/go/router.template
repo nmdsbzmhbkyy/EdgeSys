@@ -6,8 +6,8 @@
 package router
 
 import (
-    "github.com/PandaXGO/PandaKit/model"
-    "github.com/PandaXGO/PandaKit/restfulx"
+    "mod.miligc.com/edge-common/CommonKit/model"
+    "mod.miligc.com/edge-common/CommonKit/restfulx"
 	"EdgeSys/apps/{{.PackageName}}/api"
 	"EdgeSys/apps/{{.PackageName}}/entity"
 	"EdgeSys/apps/{{.PackageName}}/services"

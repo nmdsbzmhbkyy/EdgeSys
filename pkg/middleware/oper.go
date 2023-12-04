@@ -5,8 +5,8 @@ import (
 	"EdgeSys/apps/log/services"
 	"net/http"
 
-	"github.com/PandaXGO/PandaKit/restfulx"
-	"github.com/PandaXGO/PandaKit/utils"
+	"mod.miligc.com/edge-common/CommonKit/restfulx"
+	"mod.miligc.com/edge-common/CommonKit/utils"
 )
 
 func OperationHandler(rc *restfulx.ReqCtx) error {

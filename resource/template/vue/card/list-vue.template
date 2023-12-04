@@ -66,66 +66,60 @@
                  type="danger"
                  plain
                  v-auth="'{{.PackageName}}:{{.BusinessName}}:delete'"
-                 :disabled="state.multiple"
+                 :disabled="multiple"
                  @click="onTabelRowDel"
                  ><SvgIcon name="elementDelete" />删除</el-button>
              </div>
            </div>
         </template>
-    <!--数据表格-->
-    <el-table
-      v-loading="state.loading"
-      :data="state.tableData"
-      @selection-change="handleSelectionChange"
-    >
-      <el-table-column type="selection" width="55" align="center" />
-      {{- range $index, $column := .Columns -}}
-      {{- if eq $column.IsPk "1"}}
-      <el-table-column label="编号" align="center" prop="{{$column.JsonField}}" />
-      {{- else if and (eq $column.IsList "1") (eq $column.HtmlType "datetime")}}
-      {{- if ne $column.ColumnComment "" }}
-      <el-table-column label="{{$column.ColumnComment}}" align="center" prop="{{$column.JsonField}}" width="180">
-        <template #default="scope">
-             <span>{{"{{"}} dateStrFormat(scope.row.{{$column.JsonField}}) {{"}}"}}</span>
-        </template>
-      </el-table-column>
-      {{- end -}}
-      {{- else if and (eq $column.IsList "1") (ne $column.DictType "") }}
-      <el-table-column label="{{$column.ColumnComment}}" align="center" prop="{{$column.JsonField}}" >
-      <template #default="scope">
-          <el-tag :type="scope.row.{{$column.JsonField}} === '0' ? 'success': 'warning'" disable-transitions>{{"{{"}} {{$column.JsonField}}Format(scope.row) || '-- --' {{"}}"}}</el-tag>
-      </template>
-      </el-table-column>
-      {{- else if and (eq $column.IsList "1") (ne $column.JsonField "") (ne $column.JsonField "createTime") (ne $column.JsonField "updateTime") (ne $column.JsonField "deleteTime") }}
-      {{- if ne $column.ColumnComment "" }}
-      <el-table-column label="{{$column.ColumnComment}}" align="center" prop="{{$column.JsonField}}" />
-      {{- end -}}
-      {{- end -}}
-      {{- end }}
-      <el-table-column
-        label="操作"
-        align="center"
-        class-name="small-padding fixed-width"
-      >
-        <template #default="scope">
-          <el-popover  placement="left">
-            <template #reference>
-              <el-button type="primary" circle ><SvgIcon name="elementStar"/></el-button>
-            </template>
-            <div>
-              <el-button text type="primary" v-auth="'{{.PackageName}}:{{.BusinessName}}:edit'" @click="onOpenEditModule(scope.row)">
-                <SvgIcon name="elementEdit" />修改
-              </el-button>
+      <!--数据卡片-->
+      <div class="content_box">
+        <div v-for="data in state.tableData" :key="data.{{.PkJsonField}}" class="content_image_item">
+          <el-card :body-style="{ padding: '0px' }" class="ft-card">
+            {{- range $index, $column := .Columns -}}
+            {{- if and (eq $column.IsList "1") (eq $column.HtmlType "image")}}
+            <el-image class="ft-image" :src="data.{{$column.JsonField}}" fit="fill">
+              <template #error>
+                <div class="image-slot">
+                  <SvgIcon name="elementPicture" />
+                </div>
+              </template>
+            </el-image>
+            {{- end -}}
+            {{- end }}
+            <div class="ft-foot">
+              <div class="ft-item-name">
+                <el-checkbox v-model="data.checked" @change="handleSelectionChange(data)">
+                  <template #default>
+                    {{- range $index, $column := .Columns -}}
+                    {{- if and (eq $column.IsList "1") (eq $column.HtmlType "title")}}
+                    {{"{{"}} data.{{$column.JsonField}} {{"}}"}}
+                    {{- end -}}
+                    {{- end }}
+                  </template>
+                </el-checkbox>
+              </div>
+              <div>
+                <el-popover>
+                  <template #reference>
+                    <el-button type="primary" circle size="small"><SvgIcon name="elementStar"/></el-button>
+                  </template>
+                  <div>
+                    <el-button text type="primary" v-auth="'{{.PackageName}}:{{.BusinessName}}:edit'" @click="onOpenEditModule(data)">
+                      <SvgIcon name="elementEdit" />修改
+                    </el-button>
+                  </div>
+                  <div>
+                    <el-button text type="primary" v-auth="'{{.PackageName}}:{{.BusinessName}}:delete'" @click="onTabelRowDel(data)">
+                      <SvgIcon name="elementDelete" />删除
+                    </el-button>
+                  </div>
+                </el-popover>
+              </div>
             </div>
-            <div>
-              <el-button text type="primary" v-auth="'{{.PackageName}}:{{.BusinessName}}:delete'" @click="onTabelRowDel(scope.row)">
-                <SvgIcon name="elementDelete" />删除
-              </el-button>
-            </div>
-          </el-popover>
-        </template>
-      </el-table-column>
-    </el-table>
+          </el-card>
+        </div>
+      </div>
     <!-- 分页设置-->
     <div v-show="state.total > 0">
         <el-divider></el-divider>
@@ -140,7 +134,7 @@
         />
     </div>
     </el-card>
-    <!-- 添加或修改岗位对话框 -->
+    <!-- 添加或修改对话框 -->
     <EditModule ref="editModuleRef" :title="state.title" />
   </div>
 </template>
@@ -149,6 +143,7 @@
 import {
   ref,
   reactive,
+  computed,
   onMounted,
   getCurrentInstance,
   onUnmounted,
@@ -164,10 +159,6 @@ const state = reactive({
   loading: true,
   // 选中数组
   ids: [],
-  // 非单个禁用
-  single: true,
-  // 非多个禁用
-  multiple: true,
   // 弹出层标题
   title: "",
   // 表格数据
@@ -194,6 +185,8 @@ const state = reactive({
     {{- end }}
   },
 });
+// 多个禁用
+const multiple = computed(() => !state.ids.length);
 
 /** 查询列表 */
 const handleQuery = () => {
@@ -251,22 +244,32 @@ const onTabelRowDel = (row: any) => {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
-  }).then(function () {
-    return del{{.FunctionName}}({{.PkJsonField}}s).then(() => {
+  }).then(() => {
+    return del{{.FunctionName}}({{.PkJsonField}}s).then((response: any) => {
       handleQuery();
-      ElMessage.success("删除成功");
+      if (response.code === 200) {
+         state.ids = [];
+        ElMessage.success("删除成功");
+      }
     });
   });
 };
 // 多选框选中数据
 const handleSelectionChange = (selection: any) => {
-  state.ids = selection.map((item: any) => item.{{.PkJsonField}});
-  state.single = selection.length != 1;
-  state.multiple = !selection.length;
+  if (selection.checked) {
+    state.ids.push(selection.{{.PkJsonField}});
+  } else {
+    for (let i = 0; i < state.ids.length; i++) {
+      if (state.ids[i] === selection.{{.PkJsonField}}) {
+        state.ids.splice(i, 1);
+        break;
+      }
+    }
+  }
 };
 // 页面加载时
 onMounted(() => {
-  // 查询岗位信息
+  // 查询信息
   handleQuery();
   {{- range $index, $column := .Columns -}}
   {{- if ne $column.DictType "" }}

@@ -27,6 +27,9 @@ func (p *{{.ClassName}}Api) Get{{.ClassName}}List(rc *restfulx.ReqCtx) {
 	{{- if eq $column.IsQuery "1" -}}
 	{{- if eq $column.GoType "string"}}
     data.{{$column.GoField}} = restfulx.QueryParam(rc, "{{$column.JsonField}}")
+    {{- else if eq $column.GoType "Time"}}
+	data.{{$column.GoField}}, _ = time.Parse(time.RFC3339, restfulx.QueryParam(rc, "{{$column.JsonField}}"))
+	data.{{$column.GoField}} = data.{{$column.GoField}}.In(time.Local)
     {{- else if eq $column.GoType "int" }}
     data.{{$column.GoField}} = restfulx.QueryInt(rc, "{{$column.JsonField}}", 0)
     {{- else if eq $column.GoType "int64" }}
@@ -65,6 +68,7 @@ func (p *{{.ClassName}}Api) Get{{.ClassName}}(rc *restfulx.ReqCtx) {
 func (p *{{.ClassName}}Api) Insert{{.ClassName}}(rc *restfulx.ReqCtx) {
 	var data entity.{{.ClassName}}
 	restfulx.BindQuery(rc, &data)
+	data.CreateBy = rc.LoginAccount.UserName
 
 	p.{{.ClassName}}App.Insert(data)
 }
@@ -73,6 +77,7 @@ func (p *{{.ClassName}}Api) Insert{{.ClassName}}(rc *restfulx.ReqCtx) {
 func (p *{{.ClassName}}Api) Update{{.ClassName}}(rc *restfulx.ReqCtx) {
 	var data entity.{{.ClassName}}
 	restfulx.BindQuery(rc, &data)
+	data.UpdateBy = rc.LoginAccount.UserName
 
 	p.{{.ClassName}}App.Update(data)
 }

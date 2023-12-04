@@ -5,7 +5,7 @@
 // ==========================================================================
 package entity
 import (
-  "github.com/PandaXGO/PandaKit/model"
+  "mod.miligc.com/edge-common/CommonKit/model"
   {{$hasGTime:=false}}
   {{- range $index, $column := .Columns -}}
   {{- if eq $column.GoType "Time" -}}

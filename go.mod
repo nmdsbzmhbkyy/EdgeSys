@@ -21,7 +21,7 @@ require (
 	gorm.io/driver/mysql v1.2.0
 	gorm.io/driver/postgres v1.2.3
 	gorm.io/gorm v1.22.3
-	mod.miligc.com/edge-common/CommonKit v0.0.0-20231129192243-daa1f4cdd654
+	mod.miligc.com/edge-common/CommonKit v0.0.1
 )
 
 require (

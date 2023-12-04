@@ -4,6 +4,7 @@ import "path"
 
 type Log struct {
 	Level string   `yaml:"level"`
+	DBLog string   `yaml:"db-log"`
 	File  *LogFile `yaml:"file"`
 }
 

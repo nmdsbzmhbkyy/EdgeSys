@@ -3,11 +3,11 @@ package middleware
 import (
 	"EdgeSys/pkg/global"
 
-	"github.com/PandaXGO/PandaKit/biz"
-	"github.com/PandaXGO/PandaKit/casbin"
-	"github.com/PandaXGO/PandaKit/restfulx"
-	"github.com/PandaXGO/PandaKit/token"
 	"github.com/dgrijalva/jwt-go"
+	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/CommonKit/casbin"
+	"mod.miligc.com/edge-common/CommonKit/restfulx"
+	"mod.miligc.com/edge-common/CommonKit/token"
 )
 
 func PermissionHandler(rc *restfulx.ReqCtx) error {

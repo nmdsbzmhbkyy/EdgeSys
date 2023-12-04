@@ -6,9 +6,9 @@ import (
 	"EdgeSys/apps/system/entity"
 	"EdgeSys/apps/system/services"
 
-	"github.com/PandaXGO/PandaKit/restfulx"
 	restfulspec "github.com/emicklei/go-restful-openapi/v2"
 	"github.com/emicklei/go-restful/v3"
+	"mod.miligc.com/edge-common/CommonKit/restfulx"
 )
 
 func InitOrganizationRouter(container *restful.Container) {

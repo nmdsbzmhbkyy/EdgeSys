@@ -3,8 +3,8 @@ package cache
 import (
 	"time"
 
-	"github.com/PandaXGO/PandaKit/cache"
-	"github.com/PandaXGO/PandaKit/rediscli"
+	"mod.miligc.com/edge-common/CommonKit/cache"
+	"mod.miligc.com/edge-common/CommonKit/rediscli"
 )
 
 var RedisDb *rediscli.RedisDB

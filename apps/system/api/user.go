@@ -5,12 +5,12 @@ import (
 	"EdgeSys/apps/system/api/vo"
 	"EdgeSys/apps/system/entity"
 
-	"github.com/PandaXGO/PandaKit/model"
-	"github.com/PandaXGO/PandaKit/token"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/emicklei/go-restful/v3"
 	"github.com/kakuilan/kgo"
 	"github.com/mssola/user_agent"
+	"mod.miligc.com/edge-common/CommonKit/model"
+	"mod.miligc.com/edge-common/CommonKit/token"
 
 	logEntity "EdgeSys/apps/log/entity"
 	logServices "EdgeSys/apps/log/services"
@@ -20,11 +20,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/PandaXGO/PandaKit/biz"
-	"github.com/PandaXGO/PandaKit/captcha"
-	filek "github.com/PandaXGO/PandaKit/file"
-	"github.com/PandaXGO/PandaKit/restfulx"
-	"github.com/PandaXGO/PandaKit/utils"
+	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/CommonKit/captcha"
+	filek "mod.miligc.com/edge-common/CommonKit/file"
+	"mod.miligc.com/edge-common/CommonKit/restfulx"
+	"mod.miligc.com/edge-common/CommonKit/utils"
 )
 
 type UserApi struct {

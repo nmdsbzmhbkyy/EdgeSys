@@ -5,12 +5,12 @@ package api
 // 生成人：{{.FunctionAuthor}}
 // ==========================================================================
 import (
-    "github.com/PandaXGO/PandaKit/model"
-    "github.com/PandaXGO/PandaKit/restfulx"
+    "mod.miligc.com/edge-common/CommonKit/model"
+    "mod.miligc.com/edge-common/CommonKit/restfulx"
 
 	"EdgeSys/apps/{{.PackageName}}/entity"
 	"EdgeSys/apps/{{.PackageName}}/services"
-	"github.com/PandaXGO/PandaKit/utils"
+	"mod.miligc.com/edge-common/CommonKit/utils"
 )
 
 type {{.ClassName}}Api struct {

@@ -4,9 +4,9 @@ import (
 	"EdgeSys/apps/system/entity"
 	"EdgeSys/pkg/global"
 
-	"github.com/PandaXGO/PandaKit/biz"
 	"github.com/kakuilan/kgo"
 	"golang.org/x/crypto/bcrypt"
+	"mod.miligc.com/edge-common/CommonKit/biz"
 )
 
 type (

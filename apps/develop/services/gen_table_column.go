@@ -4,8 +4,8 @@ import (
 	"EdgeSys/apps/develop/entity"
 	"EdgeSys/pkg/global"
 	"errors"
-	"github.com/PandaXGO/PandaKit/biz"
 	"github.com/fatih/structs"
+	"mod.miligc.com/edge-common/CommonKit/biz"
 )
 
 /**

@@ -1,6 +1,6 @@
 package entity
 
-import "github.com/PandaXGO/PandaKit/model"
+import "mod.miligc.com/edge-common/CommonKit/model"
 
 type SysNotice struct {
 	NoticeId       int64  `json:"noticeId" gorm:"primary_key;AUTO_INCREMENT"`

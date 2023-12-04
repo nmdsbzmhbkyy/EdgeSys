@@ -7,13 +7,13 @@ import (
 	"EdgeSys/apps/system/entity"
 	"EdgeSys/apps/system/services"
 
-	"github.com/PandaXGO/PandaKit/model"
 	restfulspec "github.com/emicklei/go-restful-openapi/v2"
 	"github.com/emicklei/go-restful/v3"
+	"mod.miligc.com/edge-common/CommonKit/model"
 
 	logServices "EdgeSys/apps/log/services"
 
-	"github.com/PandaXGO/PandaKit/restfulx"
+	"mod.miligc.com/edge-common/CommonKit/restfulx"
 )
 
 func InitUserRouter(container *restful.Container) {

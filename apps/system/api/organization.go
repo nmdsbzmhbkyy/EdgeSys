@@ -8,9 +8,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/PandaXGO/PandaKit/biz"
-	"github.com/PandaXGO/PandaKit/restfulx"
-	"github.com/PandaXGO/PandaKit/utils"
+	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/CommonKit/restfulx"
+	"mod.miligc.com/edge-common/CommonKit/utils"
 )
 
 type OrganizationApi struct {

@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/PandaXGO/PandaKit/biz"
 	"gorm.io/gorm"
+	"mod.miligc.com/edge-common/CommonKit/biz"
 )
 
 func OrgAuthSet(tx *gorm.DB, roleId int64, owner string) {

@@ -14,9 +14,9 @@ import (
 	"sync"
 	"text/template"
 
-	"github.com/PandaXGO/PandaKit/biz"
-	"github.com/PandaXGO/PandaKit/utils"
 	"github.com/kakuilan/kgo"
+	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/CommonKit/utils"
 )
 
 var (

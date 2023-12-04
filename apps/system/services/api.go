@@ -5,9 +5,9 @@ import (
 	"EdgeSys/pkg/global"
 	"errors"
 
-	"github.com/PandaXGO/PandaKit/biz"
-	"github.com/PandaXGO/PandaKit/casbin"
 	"gorm.io/gorm"
+	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/CommonKit/casbin"
 )
 
 type (

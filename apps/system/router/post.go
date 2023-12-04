@@ -5,10 +5,10 @@ import (
 	"EdgeSys/apps/system/entity"
 	"EdgeSys/apps/system/services"
 
-	"github.com/PandaXGO/PandaKit/model"
-	"github.com/PandaXGO/PandaKit/restfulx"
 	restfulspec "github.com/emicklei/go-restful-openapi/v2"
 	"github.com/emicklei/go-restful/v3"
+	"mod.miligc.com/edge-common/CommonKit/model"
+	"mod.miligc.com/edge-common/CommonKit/restfulx"
 )
 
 func InitPostRouter(container *restful.Container) {
@@ -64,6 +64,16 @@ func InitPostRouter(container *restful.Container) {
 		Doc("删除岗位信息").
 		Metadata(restfulspec.KeyOpenAPITags, tags).
 		Param(ws.PathParameter("postId", "多id 1,2,3").DataType("string")))
+
+	ws.Route(ws.GET("/export").To(func(request *restful.Request, response *restful.Response) {
+		restfulx.NewReqCtx(request, response).WithLog("导出岗位信息").Handle(s.ExportPost)
+	}).
+		Doc("导出岗位信息").
+		Param(ws.QueryParameter("filename", "filename").DataType("string")).
+		Param(ws.QueryParameter("status", "status").DataType("string")).
+		Param(ws.QueryParameter("postName", "postName").DataType("string")).
+		Param(ws.QueryParameter("postCode", "postCode").DataType("string")).
+		Metadata(restfulspec.KeyOpenAPITags, tags))
 
 	container.Add(ws)
 }

@@ -4,7 +4,7 @@ import (
 	"EdgeSys/apps/develop/gen"
 	"EdgeSys/apps/develop/services"
 
-	"github.com/PandaXGO/PandaKit/restfulx"
+	"mod.miligc.com/edge-common/CommonKit/restfulx"
 )
 
 type GenApi struct {

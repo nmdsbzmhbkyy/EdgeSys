@@ -1,6 +1,6 @@
 package entity
 
-import "github.com/PandaXGO/PandaKit/model"
+import "mod.miligc.com/edge-common/CommonKit/model"
 
 type SysMenu struct {
 	MenuId      int64     `json:"menuId" gorm:"primary_key;AUTO_INCREMENT"`

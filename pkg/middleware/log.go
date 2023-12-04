@@ -3,11 +3,11 @@ package middleware
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/PandaXGO/PandaKit/biz"
-	"github.com/PandaXGO/PandaKit/logger"
-	"github.com/PandaXGO/PandaKit/restfulx"
-	"github.com/PandaXGO/PandaKit/utils"
 	"github.com/sirupsen/logrus"
+	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/CommonKit/logger"
+	"mod.miligc.com/edge-common/CommonKit/restfulx"
+	"mod.miligc.com/edge-common/CommonKit/utils"
 	"reflect"
 	"runtime/debug"
 )

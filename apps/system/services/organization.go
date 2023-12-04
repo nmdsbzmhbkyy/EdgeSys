@@ -5,8 +5,8 @@ import (
 	"EdgeSys/pkg/global"
 	"errors"
 
-	"github.com/PandaXGO/PandaKit/biz"
 	"github.com/kakuilan/kgo"
+	"mod.miligc.com/edge-common/CommonKit/biz"
 )
 
 type (

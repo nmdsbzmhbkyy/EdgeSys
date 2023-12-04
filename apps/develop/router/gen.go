@@ -4,9 +4,9 @@ import (
 	"EdgeSys/apps/develop/api"
 	"EdgeSys/apps/develop/services"
 
-	"github.com/PandaXGO/PandaKit/restfulx"
 	restfulspec "github.com/emicklei/go-restful-openapi/v2"
 	"github.com/emicklei/go-restful/v3"
+	"mod.miligc.com/edge-common/CommonKit/restfulx"
 )
 
 func InitGenRouter(container *restful.Container) {

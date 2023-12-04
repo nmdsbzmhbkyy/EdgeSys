@@ -7,10 +7,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/PandaXGO/PandaKit/biz"
-	"github.com/PandaXGO/PandaKit/model"
-	"github.com/PandaXGO/PandaKit/restfulx"
-	"github.com/PandaXGO/PandaKit/utils"
+	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/CommonKit/model"
+	"mod.miligc.com/edge-common/CommonKit/restfulx"
+	"mod.miligc.com/edge-common/CommonKit/utils"
 )
 
 type PostApi struct {
@@ -82,4 +82,19 @@ func (p *PostApi) DeletePost(rc *restfulx.ReqCtx) {
 		biz.ErrIsNil(errors.New("所有岗位都已绑定用户，无法删除"), "所有岗位都已绑定用户，无法删除")
 	}
 	p.PostApp.Delete(deList)
+}
+
+// ExportPost 导出岗位
+func (p *PostApi) ExportPost(rc *restfulx.ReqCtx) {
+	filename := restfulx.QueryParam(rc, "filename")
+	postName := restfulx.QueryParam(rc, "postName")
+	postCode := restfulx.QueryParam(rc, "postCode")
+	status := restfulx.QueryParam(rc, "status")
+	post := entity.SysPost{Status: status, PostName: postName, PostCode: postCode}
+
+	list := p.PostApp.FindList(post)
+
+	filename = utils.GetFileName(global.Conf.Server.ExcelDir, filename)
+	utils.InterfaceToExcel(*list, filename)
+	rc.Download(filename)
 }

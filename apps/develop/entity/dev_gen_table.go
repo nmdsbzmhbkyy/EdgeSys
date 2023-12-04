@@ -8,7 +8,7 @@
  */
 package entity
 
-import "github.com/PandaXGO/PandaKit/model"
+import "mod.miligc.com/edge-common/CommonKit/model"
 
 type DevGenTable struct {
 	TableId        int64               `gorm:"primaryKey;autoIncrement"   json:"tableId"` // 编号

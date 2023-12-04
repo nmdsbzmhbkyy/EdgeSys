@@ -6,10 +6,10 @@ import (
 	"EdgeSys/apps/develop/entity"
 	"EdgeSys/apps/develop/services"
 
-	"github.com/PandaXGO/PandaKit/model"
-	"github.com/PandaXGO/PandaKit/restfulx"
 	restfulspec "github.com/emicklei/go-restful-openapi/v2"
 	"github.com/emicklei/go-restful/v3"
+	"mod.miligc.com/edge-common/CommonKit/model"
+	"mod.miligc.com/edge-common/CommonKit/restfulx"
 )
 
 func InitGenTableRouter(container *restful.Container) {

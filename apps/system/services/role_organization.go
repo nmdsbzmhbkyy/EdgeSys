@@ -5,7 +5,7 @@ import (
 	"EdgeSys/pkg/global"
 	"fmt"
 
-	"github.com/PandaXGO/PandaKit/biz"
+	"mod.miligc.com/edge-common/CommonKit/biz"
 )
 
 type (

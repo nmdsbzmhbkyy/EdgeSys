@@ -5,7 +5,7 @@ import (
 	"EdgeSys/pkg/global"
 	"EdgeSys/pkg/global/model"
 
-	"github.com/PandaXGO/PandaKit/biz"
+	"mod.miligc.com/edge-common/CommonKit/biz"
 )
 
 type (
@@ -60,5 +60,5 @@ func (m *JobLogModelImpl) Delete(logIds []int64) {
 }
 
 func (m *JobLogModelImpl) DeleteAll() {
-	global.Db.Exec("DELETE FROM log_jobs")
+	global.Db.Exec("DELETE FROM job_logs")
 }

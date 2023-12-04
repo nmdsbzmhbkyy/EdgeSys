@@ -514,3 +514,5 @@ honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod h1:rf3lG4BRIbNafJWh
 honnef.co/go/tools v0.0.1-2019.2.3/go.mod h1:a3bituU0lyd329TUQxRnasdCoJDkEUEAqEt0JzvZhAg=
 mod.miligc.com/edge-common/CommonKit v0.0.0-20231129192243-daa1f4cdd654 h1:SWEMBoAx/opu2lB76JegIntdfcIMC+oU5nYskS6iS54=
 mod.miligc.com/edge-common/CommonKit v0.0.0-20231129192243-daa1f4cdd654/go.mod h1:mea2uEVDxmw2+iqs9sWL8eE+KTB7RN/3quHYaV4acBM=
+mod.miligc.com/edge-common/CommonKit v0.0.1 h1:qQGpFzFXKKY0+yLC9XWyoL6zWnuJ/IobUwzu/mG+KII=
+mod.miligc.com/edge-common/CommonKit v0.0.1/go.mod h1:mea2uEVDxmw2+iqs9sWL8eE+KTB7RN/3quHYaV4acBM=

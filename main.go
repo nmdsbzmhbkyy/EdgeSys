@@ -1,7 +1,6 @@
 package main
 
 import (
-	"EdgeSys/db"
 	"EdgeSys/pkg/cache"
 	"EdgeSys/pkg/config"
 	"EdgeSys/pkg/global"
@@ -40,7 +39,8 @@ var rootCmd = &cobra.Command{
 				dbGorm.MaxIdleConns = global.Conf.Postgresql.MaxIdleConns
 				dbGorm.MaxOpenConns = global.Conf.Postgresql.MaxOpenConns
 			}
-			global.Db = db.GormInit(&dbGorm)
+			dbGorm.DBLog = global.Conf.Log.DBLog
+			global.Db = dbGorm.GormInit()
 			global.Log.Infof("%s连接成功", global.Conf.Server.DbType)
 			client, err := rediscli.NewRedisClient(global.Conf.Redis.Host, global.Conf.Redis.Password, global.Conf.Redis.Port, global.Conf.Redis.Db)
 			if err != nil {

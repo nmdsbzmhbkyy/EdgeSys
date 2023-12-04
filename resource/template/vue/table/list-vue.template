@@ -251,10 +251,12 @@ const onTabelRowDel = (row: any) => {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
-  }).then(function () {
-    return del{{.FunctionName}}({{.PkJsonField}}s).then(() => {
+  }).then(() => {
+    return del{{.FunctionName}}({{.PkJsonField}}s).then((response: any) => {
       handleQuery();
-      ElMessage.success("删除成功");
+      if (response.code === 200) {
+        ElMessage.success("删除成功");
+      }
     });
   });
 };

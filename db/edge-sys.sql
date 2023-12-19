@@ -478,6 +478,7 @@ CREATE TABLE `sys_menus` (
   `create_by` varchar(128) DEFAULT NULL,
   `update_by` varchar(128) DEFAULT NULL,
   `remark` varchar(191) DEFAULT NULL,
+  `group` char(1) DEFAULT 0 NOT NULL,
   `create_time` datetime DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
   `delete_time` datetime DEFAULT NULL,

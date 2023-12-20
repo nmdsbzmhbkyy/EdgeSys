@@ -52,8 +52,9 @@ func (m *MenuApi) GetMenuPaths(rc *restfulx.ReqCtx) {
 func (m *MenuApi) GetMenuList(rc *restfulx.ReqCtx) {
 	menuName := restfulx.QueryParam(rc, "menuName")
 	status := restfulx.QueryParam(rc, "status")
+	menuGroup := restfulx.QueryParam(rc, "menuGroup")
 
-	menu := entity.SysMenu{MenuName: menuName, Status: status}
+	menu := entity.SysMenu{MenuName: menuName, Status: status, MenuGroup: menuGroup}
 	if menu.MenuName == "" {
 		rc.ResData = m.MenuApp.SelectMenu(menu)
 	} else {

@@ -22,16 +22,16 @@ type SysMenu struct {
 	CreateBy    string    `json:"createBy" gorm:"type:varchar(128);"`
 	UpdateBy    string    `json:"updateBy" gorm:"type:varchar(128);"`
 	Remark      string    `json:"remark"  gorm:"type:varchar(256);"` // 备注
-	Group       string    `json:"group"  gorm:"type:char(1);"`       // 分组（0前端 1后端）
+	MenuGroup   string    `json:"menuGroup"  gorm:"type:char(1);"`   // 分组（0前端 1后端）
 	Children    []SysMenu `json:"children" gorm:"-"`
 	model.BaseModel
 }
 
 type MenuLabel struct {
-	MenuId   int64       `json:"menuId" gorm:"-"`
-	MenuName string      `json:"menuName" gorm:"-"`
-	Group    string      `json:"group" gorm:"-"`
-	Children []MenuLabel `json:"children" gorm:"-"`
+	MenuId    int64       `json:"menuId" gorm:"-"`
+	MenuName  string      `json:"menuName" gorm:"-"`
+	MenuGroup string      `json:"menuGroup" gorm:"-"`
+	Children  []MenuLabel `json:"children" gorm:"-"`
 }
 
 type MenuRole struct {

@@ -65,8 +65,8 @@ func (m *sysMenuModelImpl) FindListPage(page, pageSize int, data entity.SysMenu)
 	if data.Status != "" {
 		db = db.Where("status = ?", data.Status)
 	}
-	if data.Group != "" {
-		db = db.Where("group = ?", data.Group)
+	if data.MenuGroup != "" {
+		db = db.Where("menu_group = ?", data.MenuGroup)
 	}
 	db.Where("delete_time IS NULL")
 	err := db.Count(&total).Error
@@ -95,8 +95,8 @@ func (m *sysMenuModelImpl) FindList(data entity.SysMenu) *[]entity.SysMenu {
 	if data.Status != "" {
 		db = db.Where("status = ?", data.Status)
 	}
-	if data.Group != "" {
-		db = db.Where("group = ?", data.Group)
+	if data.MenuGroup != "" {
+		db = db.Where("menu_group = ?", data.MenuGroup)
 	}
 	db.Where("delete_time IS NULL")
 	err := db.Order("sort").Find(&list).Error
@@ -143,7 +143,7 @@ func (m *sysMenuModelImpl) SelectMenuLabel(data entity.SysMenu) *[]entity.MenuLa
 		e := entity.MenuLabel{}
 		e.MenuId = ml[i].MenuId
 		e.MenuName = ml[i].MenuName
-		e.Group = ml[i].Group
+		e.MenuGroup = ml[i].MenuGroup
 		menusInfo := DiguiMenuLabel(menuList, e)
 
 		redData = append(redData, menusInfo)
@@ -215,7 +215,7 @@ func DiguiMenu(menulist *[]entity.SysMenu, menu entity.SysMenu) entity.SysMenu {
 		mi.Sort = list[j].Sort
 		mi.Status = list[j].Status
 		mi.IsHide = list[j].IsHide
-		mi.Group = list[j].Group
+		mi.MenuGroup = list[j].MenuGroup
 		mi.CreatedAt = list[j].CreatedAt
 		mi.UpdatedAt = list[j].UpdatedAt
 		mi.Children = []entity.SysMenu{}
@@ -245,7 +245,7 @@ func DiguiMenuLabel(menulist *[]entity.SysMenu, menu entity.MenuLabel) entity.Me
 		mi := entity.MenuLabel{}
 		mi.MenuId = list[j].MenuId
 		mi.MenuName = list[j].MenuName
-		mi.Group = list[j].Group
+		mi.MenuGroup = list[j].MenuGroup
 		mi.Children = []entity.MenuLabel{}
 		if list[j].MenuType != "F" {
 			ms := DiguiMenuLabel(menulist, mi)

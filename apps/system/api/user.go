@@ -357,7 +357,7 @@ func Build(menus []entity.SysMenu) []vo.RouterVo {
 			IsIframe:    equals("0", ms.IsIframe),
 			Auth:        auth,
 			Icon:        ms.Icon,
-			Group:       ms.Group,
+			Group:       ms.MenuGroup,
 		}
 		rv.Children = Build(ms.Children)
 		rvs = append(rvs, rv)

@@ -19,8 +19,8 @@ type MenuApi struct {
 }
 
 func (m *MenuApi) GetMenuTreeSelect(rc *restfulx.ReqCtx) {
-	lable := m.MenuApp.SelectMenuLable(entity.SysMenu{})
-	rc.ResData = lable
+	label := m.MenuApp.SelectMenuLabel(entity.SysMenu{})
+	rc.ResData = label
 }
 
 func (m *MenuApi) GetMenuRole(rc *restfulx.ReqCtx) {
@@ -32,7 +32,7 @@ func (m *MenuApi) GetMenuRole(rc *restfulx.ReqCtx) {
 func (m *MenuApi) GetMenuTreeRoleSelect(rc *restfulx.ReqCtx) {
 	roleId := restfulx.PathParamInt(rc, "roleId")
 
-	result := m.MenuApp.SelectMenuLable(entity.SysMenu{})
+	result := m.MenuApp.SelectMenuLabel(entity.SysMenu{})
 	menuIds := make([]int64, 0)
 	if roleId != 0 {
 		menuIds = m.RoleApp.GetRoleMeunId(entity.SysRole{RoleId: int64(roleId)})
@@ -52,8 +52,9 @@ func (m *MenuApi) GetMenuPaths(rc *restfulx.ReqCtx) {
 func (m *MenuApi) GetMenuList(rc *restfulx.ReqCtx) {
 	menuName := restfulx.QueryParam(rc, "menuName")
 	status := restfulx.QueryParam(rc, "status")
+	menuGroup := restfulx.QueryParam(rc, "menuGroup")
 
-	menu := entity.SysMenu{MenuName: menuName, Status: status}
+	menu := entity.SysMenu{MenuName: menuName, Status: status, MenuGroup: menuGroup}
 	if menu.MenuName == "" {
 		rc.ResData = m.MenuApp.SelectMenu(menu)
 	} else {

@@ -22,4 +22,5 @@ type MetaVo struct {
 	IsIframe    bool     `json:"isIframe"`
 	Auth        []string `json:"auth"`
 	Icon        string   `json:"icon"`
+	Group       string   `json:"group"`
 }

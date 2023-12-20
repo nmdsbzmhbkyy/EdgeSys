@@ -18,10 +18,10 @@ type SysMenu struct {
 	IsKeepAlive string    `json:"isKeepAlive" gorm:"type:varchar(1);"` //是否缓存组件状态（0是 1否）
 	IsAffix     string    `json:"isAffix" gorm:"type:varchar(1);"`     //是否固定在 tagsView 栏上（0是 1否）
 	Permission  string    `json:"permission" gorm:"type:varchar(32);"` //权限标识
-	Status      string    `json:"status" gorm:"type:varchar(1);`       // 菜单状态（0正常 1停用）
+	Status      string    `json:"status" gorm:"type:varchar(1);"`      // 菜单状态（0正常 1停用）
 	CreateBy    string    `json:"createBy" gorm:"type:varchar(128);"`
 	UpdateBy    string    `json:"updateBy" gorm:"type:varchar(128);"`
-	Remark      string    `json:"remark"  gorm:"type:varchar(256);` // 备注
+	Remark      string    `json:"remark"  gorm:"type:varchar(256);"` // 备注
 	Children    []SysMenu `json:"children" gorm:"-"`
 	model.BaseModel
 }

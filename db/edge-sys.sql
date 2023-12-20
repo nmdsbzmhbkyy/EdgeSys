@@ -478,7 +478,7 @@ CREATE TABLE `sys_menus` (
   `create_by` varchar(128) DEFAULT NULL,
   `update_by` varchar(128) DEFAULT NULL,
   `remark` varchar(191) DEFAULT NULL,
-  `menu_group` char(1) DEFAULT 0 NOT NULL,
+  `menu_group` char(1) DEFAULT 1 NOT NULL COMMENT '0:前台 , 1:后台',
   `create_time` datetime DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
   `delete_time` datetime DEFAULT NULL,

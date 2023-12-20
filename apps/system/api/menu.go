@@ -19,8 +19,8 @@ type MenuApi struct {
 }
 
 func (m *MenuApi) GetMenuTreeSelect(rc *restfulx.ReqCtx) {
-	lable := m.MenuApp.SelectMenuLable(entity.SysMenu{})
-	rc.ResData = lable
+	label := m.MenuApp.SelectMenuLabel(entity.SysMenu{})
+	rc.ResData = label
 }
 
 func (m *MenuApi) GetMenuRole(rc *restfulx.ReqCtx) {
@@ -32,7 +32,7 @@ func (m *MenuApi) GetMenuRole(rc *restfulx.ReqCtx) {
 func (m *MenuApi) GetMenuTreeRoleSelect(rc *restfulx.ReqCtx) {
 	roleId := restfulx.PathParamInt(rc, "roleId")
 
-	result := m.MenuApp.SelectMenuLable(entity.SysMenu{})
+	result := m.MenuApp.SelectMenuLabel(entity.SysMenu{})
 	menuIds := make([]int64, 0)
 	if roleId != 0 {
 		menuIds = m.RoleApp.GetRoleMeunId(entity.SysRole{RoleId: int64(roleId)})

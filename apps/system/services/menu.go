@@ -16,7 +16,7 @@ type (
 		Update(data entity.SysMenu) *entity.SysMenu
 		Delete(menuId []int64)
 		SelectMenu(data entity.SysMenu) *[]entity.SysMenu
-		SelectMenuLable(data entity.SysMenu) *[]entity.MenuLable
+		SelectMenuLabel(data entity.SysMenu) *[]entity.MenuLabel
 		SelectMenuRole(roleName string) *[]entity.SysMenu
 		GetMenuRole(data entity.MenuRole) *[]entity.MenuRole
 	}
@@ -131,20 +131,20 @@ func (m *sysMenuModelImpl) SelectMenu(data entity.SysMenu) *[]entity.SysMenu {
 	return &redData
 }
 
-func (m *sysMenuModelImpl) SelectMenuLable(data entity.SysMenu) *[]entity.MenuLable {
+func (m *sysMenuModelImpl) SelectMenuLabel(data entity.SysMenu) *[]entity.MenuLabel {
 	menuList := m.FindList(data)
 
-	redData := make([]entity.MenuLable, 0)
+	redData := make([]entity.MenuLabel, 0)
 	ml := *menuList
 	for i := 0; i < len(ml); i++ {
 		if ml[i].ParentId != 0 {
 			continue
 		}
-		e := entity.MenuLable{}
+		e := entity.MenuLabel{}
 		e.MenuId = ml[i].MenuId
 		e.MenuName = ml[i].MenuName
 		e.Group = ml[i].Group
-		menusInfo := DiguiMenuLable(menuList, e)
+		menusInfo := DiguiMenuLabel(menuList, e)
 
 		redData = append(redData, menusInfo)
 	}
@@ -233,22 +233,22 @@ func DiguiMenu(menulist *[]entity.SysMenu, menu entity.SysMenu) entity.SysMenu {
 	return menu
 }
 
-func DiguiMenuLable(menulist *[]entity.SysMenu, menu entity.MenuLable) entity.MenuLable {
+func DiguiMenuLabel(menulist *[]entity.SysMenu, menu entity.MenuLabel) entity.MenuLabel {
 	list := *menulist
 
-	min := make([]entity.MenuLable, 0)
+	min := make([]entity.MenuLabel, 0)
 	for j := 0; j < len(list); j++ {
 
 		if menu.MenuId != list[j].ParentId {
 			continue
 		}
-		mi := entity.MenuLable{}
+		mi := entity.MenuLabel{}
 		mi.MenuId = list[j].MenuId
 		mi.MenuName = list[j].MenuName
 		mi.Group = list[j].Group
-		mi.Children = []entity.MenuLable{}
+		mi.Children = []entity.MenuLabel{}
 		if list[j].MenuType != "F" {
-			ms := DiguiMenuLable(menulist, mi)
+			ms := DiguiMenuLabel(menulist, mi)
 			min = append(min, ms)
 		} else {
 			min = append(min, mi)

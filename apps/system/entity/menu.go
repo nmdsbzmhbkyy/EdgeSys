@@ -27,11 +27,11 @@ type SysMenu struct {
 	model.BaseModel
 }
 
-type MenuLable struct {
+type MenuLabel struct {
 	MenuId   int64       `json:"menuId" gorm:"-"`
 	MenuName string      `json:"menuName" gorm:"-"`
 	Group    string      `json:"group" gorm:"-"`
-	Children []MenuLable `json:"children" gorm:"-"`
+	Children []MenuLabel `json:"children" gorm:"-"`
 }
 
 type MenuRole struct {

@@ -50,6 +50,24 @@ func (m *sysMenuModelImpl) FindListPage(page, pageSize int, data entity.SysMenu)
 	offset := pageSize * (page - 1)
 	db := global.Db.Table(m.table)
 	// 此处填写 where参数判断
+	if data.MenuName != "" {
+		db = db.Where("menu_name like ?", "%"+data.MenuName+"%")
+	}
+	if data.Path != "" {
+		db = db.Where("path = ?", data.Path)
+	}
+	if data.MenuType != "" {
+		db = db.Where("menu_type = ?", data.MenuType)
+	}
+	if data.Title != "" {
+		db = db.Where("title like ?", "%"+data.Title+"%")
+	}
+	if data.Status != "" {
+		db = db.Where("status = ?", data.Status)
+	}
+	if data.Group != "" {
+		db = db.Where("group = ?", data.Group)
+	}
 	db.Where("delete_time IS NULL")
 	err := db.Count(&total).Error
 	err = db.Limit(pageSize).Offset(offset).Find(&list).Error
@@ -76,6 +94,9 @@ func (m *sysMenuModelImpl) FindList(data entity.SysMenu) *[]entity.SysMenu {
 	}
 	if data.Status != "" {
 		db = db.Where("status = ?", data.Status)
+	}
+	if data.Group != "" {
+		db = db.Where("group = ?", data.Group)
 	}
 	db.Where("delete_time IS NULL")
 	err := db.Order("sort").Find(&list).Error
@@ -122,6 +143,7 @@ func (m *sysMenuModelImpl) SelectMenuLable(data entity.SysMenu) *[]entity.MenuLa
 		e := entity.MenuLable{}
 		e.MenuId = ml[i].MenuId
 		e.MenuName = ml[i].MenuName
+		e.Group = ml[i].Group
 		menusInfo := DiguiMenuLable(menuList, e)
 
 		redData = append(redData, menusInfo)
@@ -193,6 +215,7 @@ func DiguiMenu(menulist *[]entity.SysMenu, menu entity.SysMenu) entity.SysMenu {
 		mi.Sort = list[j].Sort
 		mi.Status = list[j].Status
 		mi.IsHide = list[j].IsHide
+		mi.Group = list[j].Group
 		mi.CreatedAt = list[j].CreatedAt
 		mi.UpdatedAt = list[j].UpdatedAt
 		mi.Children = []entity.SysMenu{}
@@ -222,6 +245,7 @@ func DiguiMenuLable(menulist *[]entity.SysMenu, menu entity.MenuLable) entity.Me
 		mi := entity.MenuLable{}
 		mi.MenuId = list[j].MenuId
 		mi.MenuName = list[j].MenuName
+		mi.Group = list[j].Group
 		mi.Children = []entity.MenuLable{}
 		if list[j].MenuType != "F" {
 			ms := DiguiMenuLable(menulist, mi)

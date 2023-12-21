@@ -27,8 +27,8 @@ func InitMenuRouter(container *restful.Container) {
 	}).
 		Doc("获取菜单树").
 		Metadata(restfulspec.KeyOpenAPITags, tags).
-		Writes([]entity.MenuLable{}).
-		Returns(200, "OK", []entity.MenuLable{}))
+		Writes([]entity.MenuLabel{}).
+		Returns(200, "OK", []entity.MenuLabel{}))
 
 	ws.Route(ws.GET("/menuRole").To(func(request *restful.Request, response *restful.Response) {
 		restfulx.NewReqCtx(request, response).WithLog("获取角色菜单").Handle(s.GetMenuRole)

@@ -14,7 +14,7 @@ type OrganizationTreeVo struct {
 }
 
 type MenuTreeVo struct {
-	Menus       []entity.MenuLable `json:"menus"`
+	Menus       []entity.MenuLabel `json:"menus"`
 	CheckedKeys []int64            `json:"checkedKeys"`
 }
 

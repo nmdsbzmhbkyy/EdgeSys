@@ -26,6 +26,7 @@ func InitMenuRouter(container *restful.Container) {
 		restfulx.NewReqCtx(request, response).WithLog("获取菜单树").WithNeedToken(false).WithNeedCasbin(false).Handle(s.GetMenuTreeSelect)
 	}).
 		Doc("获取菜单树").
+		Param(ws.QueryParameter("menuGroup", "menuGroup").DataType("string")).
 		Metadata(restfulspec.KeyOpenAPITags, tags).
 		Writes([]entity.MenuLabel{}).
 		Returns(200, "OK", []entity.MenuLabel{}))
@@ -64,6 +65,7 @@ func InitMenuRouter(container *restful.Container) {
 		Doc("获取菜单列表").
 		Param(ws.QueryParameter("menuName", "menuName").DataType("string")).
 		Param(ws.QueryParameter("status", "status").DataType("string")).
+		Param(ws.QueryParameter("menuGroup", "menuGroup").DataType("string")).
 		Metadata(restfulspec.KeyOpenAPITags, tags).
 		Writes([]entity.SysMenu{}).
 		Returns(200, "OK", []entity.SysMenu{}))

@@ -19,7 +19,8 @@ type MenuApi struct {
 }
 
 func (m *MenuApi) GetMenuTreeSelect(rc *restfulx.ReqCtx) {
-	label := m.MenuApp.SelectMenuLabel(entity.SysMenu{})
+	menuGroup := restfulx.QueryParam(rc, "menuGroup")
+	label := m.MenuApp.SelectMenuLabel(entity.SysMenu{MenuGroup: menuGroup})
 	rc.ResData = label
 }
 

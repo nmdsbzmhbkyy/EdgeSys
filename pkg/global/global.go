@@ -9,8 +9,9 @@ import (
 )
 
 var (
-	Log  *logrus.Logger // 日志
-	Db   *gorm.DB       // gorm
-	Conf *config.Config
+	Log    *logrus.Logger // 日志
+	Db     *gorm.DB       // gorm
+	Conf   *config.Config
+	MiliDb *gorm.DB
 )
 var EventEmitter = events.EventEmitter{}

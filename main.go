@@ -1,6 +1,7 @@
 package main
 
 import (
+	"EdgeSys/apps/business"
 	"EdgeSys/pkg/cache"
 	"EdgeSys/pkg/config"
 	"EdgeSys/pkg/global"
@@ -8,6 +9,9 @@ import (
 	"EdgeSys/pkg/middleware"
 	"context"
 	"github.com/spf13/cobra"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	gormlog "gorm.io/gorm/logger"
 	"log"
 	"mod.miligc.com/edge-common/CommonKit/logger"
 	"mod.miligc.com/edge-common/CommonKit/rediscli"
@@ -42,6 +46,8 @@ var rootCmd = &cobra.Command{
 			dbGorm.DBLog = global.Conf.Log.DBLog
 			global.Db = dbGorm.GormInit()
 			global.Log.Infof("%s连接成功", global.Conf.Server.DbType)
+			//初始化业务系统数据库
+			initBusinessDb()
 			client, err := rediscli.NewRedisClient(global.Conf.Redis.Host, global.Conf.Redis.Password, global.Conf.Redis.Port, global.Conf.Redis.Db)
 			if err != nil {
 				global.Log.Panic("Redis连接错误")
@@ -64,6 +70,11 @@ var rootCmd = &cobra.Command{
 		restfulx.UseAfterHandlerInterceptor(middleware.OperationHandler)
 
 		app := initialize.InitRouter()
+		if global.Conf.Server.LoadMethod == "debug" {
+			business.InitModule{}.InitPluginDebug(app.Container)
+		} else {
+			business.InitModule{}.InitPlugin(app.Container)
+		}
 		global.Log.Info("路由初始化完成")
 		app.Start(context.TODO())
 
@@ -75,6 +86,24 @@ var rootCmd = &cobra.Command{
 			os.Exit(-3)
 		}
 	},
+}
+
+func initBusinessDb() {
+	//连接业务系统数据库
+	mysqlConfig := mysql.Config{
+		DSN:                       global.Conf.Mysql.Msn(), // DSN data source name
+		DefaultStringSize:         191,                     // string 类型字段的默认长度
+		DisableDatetimePrecision:  true,                    // 禁用 datetime 精度，MySQL 5.6 之前的数据库不支持
+		DontSupportRenameIndex:    true,                    // 重命名索引时采用删除并新建的方式，MySQL 5.7 之前的数据库和 MariaDB 不支持重命名索引
+		DontSupportRenameColumn:   true,                    // 用 `change` 重命名列，MySQL 8 之前的数据库和 MariaDB 不支持重命名列
+		SkipInitializeWithVersion: false,                   // 根据版本自动配置
+	}
+	ormConfig := &gorm.Config{Logger: gormlog.Default.LogMode(gormlog.Info)}
+	milidbGorm, _ := gorm.Open(mysql.New(mysqlConfig), ormConfig)
+	logger.Log.Infof("连接mysql [%s]", global.Conf.Mysql.Msn())
+	global.MiliDb = milidbGorm
+	global.Log.Infof("%s连接成功", global.Conf.Server.DbType)
+
 }
 
 func init() {

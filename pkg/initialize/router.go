@@ -5,6 +5,7 @@ import (
 	"EdgeSys/pkg/global"
 	"EdgeSys/pkg/transport"
 
+	businessRouter "EdgeSys/apps/business/router"
 	devRouter "EdgeSys/apps/develop/router"
 	jobRouter "EdgeSys/apps/job/router"
 	logRouter "EdgeSys/apps/log/router"
@@ -57,6 +58,9 @@ func InitRouter() *transport.HttpServer {
 	{
 		jobRouter.InitJobRouter(container)
 		jobRouter.InitJobLogRouter(container)
+	}
+	{
+		businessRouter.InitEventRouter(container)
 	}
 	// api接口
 	middleware.SwaggerConfig(container)

@@ -18,6 +18,7 @@ type (
 		SelectMenu(data entity.SysMenu) *[]entity.SysMenu
 		SelectMenuLabel(data entity.SysMenu) *[]entity.MenuLabel
 		SelectMenuRole(roleName string) *[]entity.SysMenu
+		SelectMenuRoleAndGroup(roleName string, menuGroup string) *[]entity.SysMenu
 		GetMenuRole(data entity.MenuRole) *[]entity.MenuRole
 	}
 
@@ -151,10 +152,13 @@ func (m *sysMenuModelImpl) SelectMenuLabel(data entity.SysMenu) *[]entity.MenuLa
 	return &redData
 }
 
-func (m *sysMenuModelImpl) GetMenuByRoleKey(roleKey string) *[]entity.SysMenu {
+func (m *sysMenuModelImpl) GetMenuByRoleKeyAndGroup(roleKey string, menuGroup string) *[]entity.SysMenu {
 	menus := make([]entity.SysMenu, 0)
 	db := global.Db.Table(m.table).Select("sys_menus.*").Joins("left join sys_role_menus on sys_role_menus.menu_id=sys_menus.menu_id")
 	db = db.Where("sys_role_menus.role_name=? and menu_type in ('M','C')", roleKey)
+	if len(menuGroup) > 0 {
+		db.Where("sys_menus.menu_group = ?", menuGroup)
+	}
 	db.Where("sys_menus.delete_time IS NULL")
 	err := db.Order("sort").Find(&menus).Error
 	biz.ErrIsNil(err, "通过角色名查询菜单失败")
@@ -164,7 +168,7 @@ func (m *sysMenuModelImpl) GetMenuByRoleKey(roleKey string) *[]entity.SysMenu {
 func (m *sysMenuModelImpl) SelectMenuRole(roleKey string) *[]entity.SysMenu {
 	redData := make([]entity.SysMenu, 0)
 
-	menulist := m.GetMenuByRoleKey(roleKey)
+	menulist := m.GetMenuByRoleKeyAndGroup(roleKey, "")
 	menuList := *menulist
 	redData = make([]entity.SysMenu, 0)
 	for i := 0; i < len(menuList); i++ {
@@ -177,6 +181,24 @@ func (m *sysMenuModelImpl) SelectMenuRole(roleKey string) *[]entity.SysMenu {
 	}
 	return &redData
 }
+
+func (m *sysMenuModelImpl) SelectMenuRoleAndGroup(roleKey string, menuGroup string) *[]entity.SysMenu {
+	redData := make([]entity.SysMenu, 0)
+
+	menulist := m.GetMenuByRoleKeyAndGroup(roleKey, menuGroup)
+	menuList := *menulist
+	redData = make([]entity.SysMenu, 0)
+	for i := 0; i < len(menuList); i++ {
+		if menuList[i].ParentId != 0 {
+			continue
+		}
+		menusInfo := DiguiMenu(&menuList, menuList[i])
+
+		redData = append(redData, menusInfo)
+	}
+	return &redData
+}
+
 func (m *sysMenuModelImpl) GetMenuRole(data entity.MenuRole) *[]entity.MenuRole {
 	menus := make([]entity.MenuRole, 0)
 

@@ -105,6 +105,7 @@ func (u *UserApi) Login(rc *restfulx.ReqCtx) {
 // Auth 用户权限信息
 func (u *UserApi) Auth(rc *restfulx.ReqCtx) {
 	userName := restfulx.QueryParam(rc, "username")
+	menuGroup := restfulx.QueryParam(rc, "menuGroup")
 	biz.NotEmpty(userName, "用户名必传")
 	var user entity.SysUser
 	user.Username = userName
@@ -112,7 +113,7 @@ func (u *UserApi) Auth(rc *restfulx.ReqCtx) {
 	role := u.RoleApp.FindOne(userData.RoleId)
 	//前端权限
 	permis := u.RoleMenuApp.GetPermis(role.RoleId)
-	menus := u.MenuApp.SelectMenuRole(role.RoleKey)
+	menus := u.MenuApp.SelectMenuRoleAndGroup(role.RoleKey, menuGroup)
 
 	rc.ResData = vo.AuthVo{
 		User:        *userData,

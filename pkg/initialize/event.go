@@ -10,13 +10,14 @@ package initialize
 
 import (
 	"EdgeSys/pkg/global"
+	public "mod.miligc.com/edge-common/edgesys-common/pkg"
 )
 
 // 初始化事件监听
 func InitEvents() {
 	// 监听**链改变 更新**规则
 	global.EventEmitter.On("", func() {
-		global.Log.Infof("**链变更")
+		public.Log.Infof("**链变更")
 		// ... 更新
 	})
 }

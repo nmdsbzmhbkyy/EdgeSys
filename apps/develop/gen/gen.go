@@ -8,6 +8,7 @@ import (
 	"EdgeSys/pkg/global"
 	"bytes"
 	"fmt"
+	public "mod.miligc.com/edge-common/edgesys-common/pkg"
 	"os"
 	"strconv"
 	"strings"
@@ -371,7 +372,7 @@ func (s *toolsGenTableColumn) GenTableInit(tableName string) entity.DevGenTable 
 				column.IsList = "0"
 				column.IsQuery = "0"
 			}
-			global.Log.Info(y)
+			public.Log.Info(y)
 			data.Columns = append(data.Columns, column)
 		}(&wg, index)
 	}

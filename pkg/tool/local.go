@@ -1,12 +1,12 @@
 package tool
 
 import (
-	"EdgeSys/pkg/global"
 	"crypto/md5"
 	"encoding/hex"
 	"errors"
 	"io"
 	"mime/multipart"
+	public "mod.miligc.com/edge-common/edgesys-common/pkg"
 	"os"
 	"path"
 	"strings"
@@ -34,7 +34,7 @@ func (local *Local) UploadFile(file *multipart.FileHeader) (string, string, erro
 	// 尝试创建此路径
 	mkdirErr := os.MkdirAll(local.Path, os.ModePerm)
 	if mkdirErr != nil {
-		global.Log.Error("function os.MkdirAll() Filed", mkdirErr.Error())
+		public.Log.Error("function os.MkdirAll() Filed", mkdirErr.Error())
 		return "", "", errors.New("function os.MkdirAll() Filed, err:" + mkdirErr.Error())
 	}
 	// 拼接路径和文件名
@@ -42,21 +42,21 @@ func (local *Local) UploadFile(file *multipart.FileHeader) (string, string, erro
 
 	f, openError := file.Open() // 读取文件
 	if openError != nil {
-		global.Log.Error("function file.Open() Filed", openError.Error())
+		public.Log.Error("function file.Open() Filed", openError.Error())
 		return "", "", errors.New("function file.Open() Filed, err:" + openError.Error())
 	}
 	defer f.Close() // 创建文件 defer 关闭
 
 	out, createErr := os.Create(p)
 	if createErr != nil {
-		global.Log.Error("function os.Create() Filed", createErr.Error())
+		public.Log.Error("function os.Create() Filed", createErr.Error())
 		return "", "", errors.New("function os.Create() Filed, err:" + createErr.Error())
 	}
 	defer out.Close() // 创建文件 defer 关闭
 
 	_, copyErr := io.Copy(out, f) // 传输（拷贝）文件
 	if copyErr != nil {
-		global.Log.Error("function io.Copy() Filed", copyErr.Error())
+		public.Log.Error("function io.Copy() Filed", copyErr.Error())
 		return "", "", errors.New("function io.Copy() Filed, err:" + copyErr.Error())
 	}
 	return p, filename, nil

@@ -4,9 +4,9 @@ import (
 	"EdgeSys/apps/system/api/vo"
 	"EdgeSys/apps/system/entity"
 	"EdgeSys/apps/system/services"
-	"EdgeSys/pkg/global"
 	"errors"
 	"fmt"
+	public "mod.miligc.com/edge-common/edgesys-common/pkg"
 
 	"mod.miligc.com/edge-common/CommonKit/biz"
 	"mod.miligc.com/edge-common/CommonKit/restfulx"
@@ -96,7 +96,7 @@ func (a *OrganizationApi) DeleteOrganization(rc *restfulx.ReqCtx) {
 		if len(*list) == 0 {
 			deList = append(deList, id)
 		} else {
-			global.Log.Info(fmt.Sprintf("dictId: %d 存在用户绑定无法删除", id))
+			public.Log.Info(fmt.Sprintf("dictId: %d 存在用户绑定无法删除", id))
 		}
 	}
 	if len(deList) == 0 {

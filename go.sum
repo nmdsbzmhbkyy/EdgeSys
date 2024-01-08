@@ -521,3 +521,15 @@ mod.miligc.com/edge-common/edgesys-common v0.0.0-20240104111622-1ffde1db12af h1:
 mod.miligc.com/edge-common/edgesys-common v0.0.0-20240104111622-1ffde1db12af/go.mod h1:lVIs0ZjZfM64Yhb7qfcSD78U9i/6VOb+/ZXXResK4m0=
 mod.miligc.com/edge-common/edgesys-common v0.0.0-20240104113104-54a120e586f1 h1:/k54B3kcilrYIMG16WLMLnsmkAaEAXEeVI/3lcXOJEg=
 mod.miligc.com/edge-common/edgesys-common v0.0.0-20240104113104-54a120e586f1/go.mod h1:lVIs0ZjZfM64Yhb7qfcSD78U9i/6VOb+/ZXXResK4m0=
+mod.miligc.com/edge-common/edgesys-common v0.0.0-20240104115416-ad2b25dbb1d2 h1:R6QQL52JWiBcGu6aImgfEwWkyOoswBBQRcygMWmKcnM=
+mod.miligc.com/edge-common/edgesys-common v0.0.0-20240104115416-ad2b25dbb1d2/go.mod h1:lVIs0ZjZfM64Yhb7qfcSD78U9i/6VOb+/ZXXResK4m0=
+mod.miligc.com/edge-common/edgesys-common v0.0.0-20240104120116-09142139c19c h1:U3DOknejaWEVex0Yc7btQmF4ubUSx7WoOEw2Mltxsj4=
+mod.miligc.com/edge-common/edgesys-common v0.0.0-20240104120116-09142139c19c/go.mod h1:lVIs0ZjZfM64Yhb7qfcSD78U9i/6VOb+/ZXXResK4m0=
+mod.miligc.com/edge-common/edgesys-common v0.0.0-20240104120901-4e7ceb1c0dfe h1:Z5Bhvk9/pp1DY6BMixTfiqfFv83mhBsHjoOBXOz3tHs=
+mod.miligc.com/edge-common/edgesys-common v0.0.0-20240104120901-4e7ceb1c0dfe/go.mod h1:lVIs0ZjZfM64Yhb7qfcSD78U9i/6VOb+/ZXXResK4m0=
+mod.miligc.com/edge-common/edgesys-common v0.0.0-20240104121321-e3f6dc7d88d5 h1:E3aj6KeQfIPChYHk7Ld65KiR8QHGZkZxaI9LrGHLENM=
+mod.miligc.com/edge-common/edgesys-common v0.0.0-20240104121321-e3f6dc7d88d5/go.mod h1:lVIs0ZjZfM64Yhb7qfcSD78U9i/6VOb+/ZXXResK4m0=
+mod.miligc.com/edge-common/edgesys-common v0.0.0-20240104121730-8f7e71316206 h1:X6YQfYoW1tK1uQ9aBYTpSgVGptitQ2/C3ZoKd2AiLeA=
+mod.miligc.com/edge-common/edgesys-common v0.0.0-20240104121730-8f7e71316206/go.mod h1:lVIs0ZjZfM64Yhb7qfcSD78U9i/6VOb+/ZXXResK4m0=
+mod.miligc.com/edge-common/edgesys-common v0.0.0-20240108035105-c0e28dfdfb0d h1:tkGUJT+dxt09zv/s2MuOxWZLrtgfKWLYLFtguupIBx4=
+mod.miligc.com/edge-common/edgesys-common v0.0.0-20240108035105-c0e28dfdfb0d/go.mod h1:p8ykdYvPP7yTveOuO7hlkxZ2F2sucQTTGX8Yy8TPyhk=

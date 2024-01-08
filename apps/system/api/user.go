@@ -4,6 +4,7 @@ import (
 	"EdgeSys/apps/system/api/form"
 	"EdgeSys/apps/system/api/vo"
 	"EdgeSys/apps/system/entity"
+	public "mod.miligc.com/edge-common/edgesys-common/pkg"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/emicklei/go-restful/v3"
@@ -202,7 +203,7 @@ func (u *UserApi) InsetSysUserAvatar(rc *restfulx.ReqCtx) {
 	guid, _ := kgo.KStr.UuidV4()
 	filPath := "static/uploadfile/" + guid + ".jpg"
 	for _, file := range files {
-		global.Log.Info(file.Filename)
+		public.Log.Info(file.Filename)
 		// 上传文件至指定目录
 		biz.ErrIsNil(filek.SaveUploadedFile(file, filPath), "保存头像失败")
 	}

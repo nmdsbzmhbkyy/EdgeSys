@@ -23,7 +23,7 @@ func RemoveWebSocket(screenId string) bool {
 	if ws, ok := Wsp[screenId]; ok {
 		ws.Conn.Close()
 		delete(Wsp, screenId)
-		global.Log.Info("已经断开websocket：" + screenId)
+		public.Log.Info("已经断开websocket：" + screenId)
 		return true
 	}
 	return false

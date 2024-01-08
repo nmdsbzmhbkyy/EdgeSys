@@ -4,6 +4,7 @@ import (
 	"EdgeSys/apps/job/entity"
 	"EdgeSys/pkg/global"
 	"EdgeSys/pkg/global/model"
+	public "mod.miligc.com/edge-common/edgesys-common/pkg"
 
 	"mod.miligc.com/edge-common/CommonKit/biz"
 )
@@ -79,7 +80,7 @@ func (m *jobModelImpl) FindList(data entity.SysJob) *[]entity.SysJob {
 	model.OrgAuthSet(db, data.RoleId, data.Owner)
 	err := db.Order("create_time desc").Find(&list).Error
 	if err != nil {
-		global.Log.Error("查询任务分页信息失败:" + err.Error())
+		public.Log.Error("查询任务分页信息失败:" + err.Error())
 	}
 	return &list
 }

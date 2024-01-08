@@ -17,6 +17,7 @@ import (
 	"mod.miligc.com/edge-common/CommonKit/rediscli"
 	"mod.miligc.com/edge-common/CommonKit/restfulx"
 	"mod.miligc.com/edge-common/CommonKit/starter"
+	public "mod.miligc.com/edge-common/edgesys-common/pkg"
 	"os"
 	"os/signal"
 	"syscall"
@@ -32,7 +33,7 @@ var rootCmd = &cobra.Command{
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if configFile != "" {
 			global.Conf = config.InitConfig(configFile)
-			global.Log = logger.InitLog(global.Conf.Log.File.GetFilename(), global.Conf.Log.Level)
+			public.Log = logger.InitLog(global.Conf.Log.File.GetFilename(), global.Conf.Log.Level)
 			dbGorm := starter.DbGorm{Type: global.Conf.Server.DbType}
 			if global.Conf.Server.DbType == "mysql" {
 				dbGorm.Dsn = global.Conf.Mysql.Dsn()
@@ -45,21 +46,21 @@ var rootCmd = &cobra.Command{
 			}
 			dbGorm.DBLog = global.Conf.Log.DBLog
 			global.Db = dbGorm.GormInit()
-			global.Log.Infof("%s连接成功", global.Conf.Server.DbType)
+			public.Log.Infof("%s连接成功", global.Conf.Server.DbType)
 			//初始化业务系统数据库
 			initBusinessDb()
 			client, err := rediscli.NewRedisClient(global.Conf.Redis.Host, global.Conf.Redis.Password, global.Conf.Redis.Port, global.Conf.Redis.Db)
 			if err != nil {
-				global.Log.Panic("Redis连接错误")
+				public.Log.Panic("Redis连接错误")
 			} else {
-				global.Log.Info("Redis连接成功")
+				public.Log.Info("Redis连接成功")
 			}
 			cache.RedisDb = client
 			initialize.InitTable()
 			// 初始化事件监听
 			go initialize.InitEvents()
 		} else {
-			global.Log.Panic("请配置config")
+			public.Log.Panic("请配置config")
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -75,7 +76,7 @@ var rootCmd = &cobra.Command{
 		} else {
 			business.InitModule{}.InitPlugin(app.Container)
 		}
-		global.Log.Info("路由初始化完成")
+		public.Log.Info("路由初始化完成")
 		app.Start(context.TODO())
 
 		stop := make(chan os.Signal, 1)
@@ -100,9 +101,9 @@ func initBusinessDb() {
 	}
 	ormConfig := &gorm.Config{Logger: gormlog.Default.LogMode(gormlog.Info)}
 	milidbGorm, _ := gorm.Open(mysql.New(mysqlConfig), ormConfig)
-	logger.Log.Infof("连接mysql [%s]", global.Conf.Mysql.Msn())
+	public.Log.Infof("连接mysql [%s]", global.Conf.Mysql.Msn())
 	global.MiliDb = milidbGorm
-	global.Log.Infof("%s连接成功", global.Conf.Server.DbType)
+	public.Log.Infof("%s连接成功", global.Conf.Server.DbType)
 
 }
 

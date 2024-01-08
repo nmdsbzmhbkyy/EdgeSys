@@ -21,7 +21,7 @@ require (
 	gorm.io/driver/mysql v1.2.0
 	gorm.io/gorm v1.22.3
 	mod.miligc.com/edge-common/CommonKit v0.0.1
-	mod.miligc.com/edge-common/edgesys-common v0.0.0-20240104113104-54a120e586f1
+	mod.miligc.com/edge-common/edgesys-common v0.0.0-20240108035105-c0e28dfdfb0d
 )
 
 require (

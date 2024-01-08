@@ -41,6 +41,6 @@ func InitTable() {
 	}
 	// err := global.TdDb.CreateEventTable()
 	// if err != nil {
-	// 	global.Log.Panic(err)
+	// 	public.Log.Panic(err)
 	// }
 }

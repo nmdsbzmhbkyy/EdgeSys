@@ -1,0 +1,323 @@
+<template>
+  <div class="app-container">
+    <el-row :gutter="20">
+      <el-col :span="4" :xs="24">
+        <el-card shadow="always">
+          <div class="head-container">
+            <el-input
+            v-model="state.organizationName"
+            placeholder="请输入组织名称"
+            clearable
+            prefix-icon="el-icon-search"
+            style="margin-bottom: 20px"
+            />
+          </div>
+          <div class="head-container">
+        	<mi-tree
+        	:treeData="state.organizationOptions"
+        	:defaultProps="state.defaultProps"
+        	nodeKey="organizationId"
+        	default-expand-all
+        	:expand-on-click-node="false"
+        	@CurNode="handleNodeClick"
+        	ref="tree"
+            >
+            </mi-tree>
+        </div>
+        </el-card>
+      </el-col>
+      <el-col :span="20" :xs="24">
+        <el-card shadow="always">
+        <!-- 查询 -->
+        <mi-search-form :columns="state.columns" labelWidth="68px" @search="handleQuery" @reset="resetQuery"></mi-search-form>
+        </el-card>
+        <el-card class="box-card">
+            <template #header>
+               <div class="card-header">
+                 <span class="card-header-text">{{.TableComment}}列表</span>
+                 <div>
+                   <el-button
+                      type="primary"
+                      plain
+                      v-auth="'{{.PackageName}}:{{.BusinessName}}:add'"
+                      @click="onOpenAddModule"
+                      ><SvgIcon name="elementPlus" />新增</el-button>
+                   <el-button
+                     type="danger"
+                     plain
+                     v-auth="'{{.PackageName}}:{{.BusinessName}}:delete'"
+                     :disabled="state.multiple"
+                     @click="onTabelRowDel"
+                     ><SvgIcon name="elementDelete" />删除</el-button>
+                 </div>
+               </div>
+            </template>
+        <!--数据表格-->
+        <mi-table
+            :table-data=state.tableData
+            :table-controller="state.oneTableController"
+            :total="state.total"
+            :border="false"
+            :loading="state.loading"
+             @handleSelectionChange="handleSelectionChange">
+             <template #opt="scope">
+              <el-popover  placement="left">
+                <template #reference>
+                  <el-button type="primary" circle ><SvgIcon name="elementStar"/></el-button>
+                </template>
+                <div>
+                  <el-button text type="primary" v-auth="'{{.PackageName}}:{{.BusinessName}}:edit'" @click="onOpenEditModule(scope.row)">
+                    <SvgIcon name="elementEdit" />修改
+                  </el-button>
+                </div>
+                <div>
+                  <el-button text type="primary" v-auth="'{{.PackageName}}:{{.BusinessName}}:delete'" @click="onTabelRowDel(scope.row)">
+                     <SvgIcon name="elementDelete" />删除
+                  </el-button>
+                </div>
+              </el-popover>
+             </template>
+        </mi-table>
+        <!-- 分页设置-->
+        <div v-show="state.total > 0">
+            <el-divider></el-divider>
+            <mi-pagination :total="state.total" @pagerFresh="handleQuery"></mi-pagination>
+        </div>
+        </el-card>
+      </el-col>
+        <!-- 添加或修改岗位对话框 -->
+        <EditModule ref="editModuleRef" :title="state.title" />
+    </el-row>
+  </div>
+</template>
+
+<script lang="ts" setup name="{{.FunctionName}}">
+import {
+  ref,
+  reactive,
+  onMounted,
+  getCurrentInstance,
+  onUnmounted,
+  watch
+} from "vue";
+import { ElMessageBox, ElMessage } from "element-plus";
+import { list{{.FunctionName}}, del{{.FunctionName}} } from "@/api/{{.PackageName}}/{{.BusinessName}}";
+import EditModule from "./component/editModule.vue";
+
+const { proxy } = getCurrentInstance() as any;
+const editModuleRef = ref();
+{{- range $index, $column := .Columns -}}
+{{- if ne $column.DictType "" }}
+// {{$column.JsonField}}Options字典数据
+const {{$column.JsonField}}Options = ref([]);
+{{- end -}}
+{{- end }}
+{{- range $index, $column := .Columns -}}
+{{- if ne $column.DictType "" }}
+const {{$column.JsonField}}Format = (row: any) => {
+   return proxy.selectDictLabel({{$column.JsonField}}Options.value, row.{{$column.JsonField}});
+};
+{{- end -}}
+{{- end }}
+const tree = ref(null);
+const state = reactive({
+  // 遮罩层
+  loading: true,
+  // 选中数组
+  ids: [],
+  // 非单个禁用
+  single: true,
+  // 非多个禁用
+  multiple: true,
+  // 弹出层标题
+  title: "",
+  // 表格数据
+  tableData: [],
+  // 总条数
+  total: 0,
+  // 查询参数
+  queryParams: {
+    // 页码
+    pageNum: 1,
+    // 每页大小
+    pageSize: 10,
+    // 以下为参数
+    {{- range $index, $column := .Columns -}}
+    {{- if eq $column.IsQuery "1" }}
+    {{$column.JsonField}}: undefined,
+    {{- end }}
+    {{- end }}
+  },
+  // 组织名称
+  organizationName: undefined,
+  // 组织树选项
+  organizationOptions: undefined,
+  defaultProps: {
+  	children: 'children',
+  	label: 'organizationName',
+  },
+  //查询columns
+  columns:[
+  {{- range $index, $column := .Columns -}}
+  {{- if and (eq $column.IsQuery "1") (ne $column.IsPk "1") (ne $column.JsonField "updateTime") (ne $column.JsonField "deleteTime") -}}
+  {{- if eq $column.HtmlType "input" "textarea" }}
+    {
+        label:"{{$column.ColumnComment}}",
+        name:"{{$column.JsonField}}",
+        placeholder:"请输入{{$column.ColumnComment}}"
+    },
+  {{- else if and (eq $column.HtmlType "switch" "select" "radio" "checkbox") (ne $column.DictType "") }}
+    {
+        label:"{{$column.ColumnComment}}",
+        name:"{{$column.JsonField}}",
+        el:"select",
+        placeholder:"请选择{{$column.ColumnComment}}",
+        columnEnum: {{$column.JsonField}}Options,
+        enum: {
+        	label: 'dictLabel',
+        	value: 'dictValue',
+        	},
+    },
+  {{- else if eq $column.HtmlType "datetime" }}
+    {
+       label:"{{$column.ColumnComment}}",
+       name:"{{$column.JsonField}}",
+       el:"datetime",
+       props:{
+         type:"datetime"
+       }
+    },
+  {{- end -}}
+  {{- end -}}
+  {{- end -}}
+  ],
+  oneTableController:[
+  {{- range $index, $column := .Columns -}}
+  {{- if eq $column.IsPk "1"}}
+    {
+        props: '{{$column.JsonField}}',
+        label: '编号',
+    },
+  {{- else if and (eq $column.IsList "1") (eq $column.HtmlType "datetime")}}
+  {{- if ne $column.ColumnComment "" }}
+    {
+        props: '{{$column.JsonField}}',
+        label: '{{$column.ColumnComment}}',
+        type: 'time',
+    },
+  {{- end -}}
+  {{- else if and (eq $column.IsList "1") (ne $column.DictType "") }}
+    {
+        props: '{{$column.JsonField}}',
+        label: '{{$column.ColumnComment}}',
+        type: 'tag',
+        render: {{$column.JsonField}}Format,
+    },
+  {{- else if and (eq $column.IsList "1") (ne $column.JsonField "") (ne $column.JsonField "createTime") (ne $column.JsonField "updateTime") (ne $column.JsonField "deleteTime") }}
+  {{- if ne $column.ColumnComment "" }}
+     {
+        props: '{{$column.JsonField}}',
+        label: '{{$column.ColumnComment}}',
+     },
+  {{- end -}}
+  {{- end -}}
+  {{- end }}
+     { label: '操作', props: 'opt', type: 'template', width: '180' },
+  ]
+});
+
+/** 查询列表 */
+const handleQuery = (val) => {
+  state.loading = true;
+  Object.assign(state.queryParams,val)
+  list{{.FunctionName}}(state.queryParams).then((response:any) => {
+    state.tableData = response.data.data;
+    state.total = response.data.total;
+    state.loading = false;
+  });
+};
+/** 重置按钮操作 */
+const resetQuery = (val) => {
+   {{- range $index, $column := .Columns -}}
+   {{- if eq $column.IsQuery "1" }}
+   val.{{$column.JsonField}} = undefined;
+   {{- end }}
+   {{- end }}
+  handleQuery(val);
+};
+
+// 打开新增弹窗
+const onOpenAddModule = () => {
+  state.title = "添加{{.TableComment}}";
+  editModuleRef.value.openDialog({});
+};
+// 打开编辑弹窗
+const onOpenEditModule = (row: object) => {
+  state.title = "修改{{.TableComment}}";
+  editModuleRef.value.openDialog(row);
+};
+/** 删除按钮操作 */
+const onTabelRowDel = (row: any) => {
+  const {{.PkJsonField}}s = row.{{.PkJsonField}} || state.ids;
+  ElMessageBox({
+    message: '是否确认删除编号为"' + {{.PkJsonField}}s + '"的数据项?',
+    title: "警告",
+    showCancelButton: true,
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(() => {
+    return del{{.FunctionName}}({{.PkJsonField}}s).then((response: any) => {
+      handleQuery();
+      if (response.code === 200) {
+        ElMessage.success("删除成功");
+      }
+    });
+  });
+};
+// 多选框选中数据
+const handleSelectionChange = (selection: any) => {
+  state.ids = selection.map((item: any) => item.{{.PkJsonField}});
+  state.single = selection.length != 1;
+  state.multiple = !selection.length;
+};
+// 节点单击事件
+const handleNodeClick = (data: any) => {
+	state.queryParams.organizationId = data.organizationId;
+	handleQuery();
+	state.queryParams.organizationId = 0;
+};
+/** 查询组织下拉树结构 */
+const getTreeselect = async () => {
+	//treeselect().then((response) => {
+		//state.organizationOptions = response.data;
+	//});
+};
+watch(
+	() => state.organizationName,
+	(newValue) => {
+		tree.value.treeRef.filter(newValue);
+	}
+);
+// 页面加载时
+onMounted(() => {
+  // 查询岗位信息
+  handleQuery();
+  getTreeselect();
+  {{- range $index, $column := .Columns -}}
+  {{- if ne $column.DictType "" }}
+  proxy.getDicts("{{$column.DictType}}").then((response: any) => {
+      {{$column.JsonField}}Options.value = response.data;
+  });
+  {{- end -}}
+  {{- end}}
+
+  proxy.mittBus.on("onEdit{{.FunctionName}}Module", (res: any) => {
+    handleQuery();
+  });
+});
+// 页面卸载时
+onUnmounted(() => {
+  proxy.mittBus.off("onEdit{{.FunctionName}}Module");
+});
+</script>

@@ -52,6 +52,7 @@ func InitUserRouter(container *restful.Container) {
 	}).
 		Doc("认证信息").
 		Param(ws.QueryParameter("username", "username").DataType("string")).
+		Param(ws.QueryParameter("menuGroup", "menuGroup").DataType("string")).
 		Metadata(restfulspec.KeyOpenAPITags, tags).
 		Writes(vo.AuthVo{}).
 		Returns(200, "OK", vo.AuthVo{}))

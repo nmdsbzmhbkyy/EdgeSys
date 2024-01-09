@@ -8,7 +8,7 @@ import (
 	"EdgeSys/pkg/global"
 	"bytes"
 	"fmt"
-	public "mod.miligc.com/edge-common/edgesys-common/pkg"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 	"os"
 	"strconv"
 	"strings"
@@ -372,7 +372,7 @@ func (s *toolsGenTableColumn) GenTableInit(tableName string) entity.DevGenTable 
 				column.IsList = "0"
 				column.IsQuery = "0"
 			}
-			public.Log.Info(y)
+			pkg.Log.Info(y)
 			data.Columns = append(data.Columns, column)
 		}(&wg, index)
 	}
@@ -386,7 +386,7 @@ func Preview(tableId int64) map[string]any {
 	// 根据tableId获取tpl_category
 	var tplCategory string
 	var err error
-	db := global.Db.Table("dev_gen_tables")
+	db := pkg.Db.Table("dev_gen_tables")
 	err = db.Debug().Model(entity.DevGenTable{}).Select("tpl_category").Where("table_id = ?", tableId).Find(&tplCategory).Error
 	if err != nil {
 		biz.ErrIsNil(err, "查询dev_gen_tables失败:")

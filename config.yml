@@ -73,7 +73,7 @@ gen:
 log:
   # 日志等级, trace, debug, info, warn, error, fatal
   level: debug
-  db-log: info
+  db-log: Info
 #  file:
 #    path: ./
 #    name: edge_sys_log.log

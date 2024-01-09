@@ -7,7 +7,7 @@ import (
 	"mod.miligc.com/edge-common/CommonKit/biz"
 	"mod.miligc.com/edge-common/CommonKit/restfulx"
 	"mod.miligc.com/edge-common/CommonKit/utils"
-	public "mod.miligc.com/edge-common/edgesys-common/pkg"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 	"reflect"
 	"runtime/debug"
 )
@@ -28,10 +28,10 @@ func LogHandler(rc *restfulx.ReqCtx) error {
 	lfs[req.Method] = req.URL.Path
 
 	if err := rc.Err; err != nil {
-		public.Log.WithFields(lfs).Error(getErrMsg(rc, err))
+		pkg.Log.WithFields(lfs).Error(getErrMsg(rc, err))
 		return nil
 	}
-	public.Log.WithFields(lfs).Info(getLogMsg(rc))
+	pkg.Log.WithFields(lfs).Info(getLogMsg(rc))
 	return nil
 }
 

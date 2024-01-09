@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/fatih/structs"
 	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 /**
@@ -41,7 +42,7 @@ func (m *devTableColumnModelImpl) FindDbTablesColumnListPage(page, pageSize int,
 	if global.Conf.Server.DbType != "mysql" && global.Conf.Server.DbType != "postgresql" {
 		biz.ErrIsNil(errors.New("只支持mysql和postgresql数据库"), "只支持mysql和postgresql数据库")
 	}
-	db := global.Db.Table("information_schema.COLUMNS")
+	db := pkg.Db.Table("information_schema.COLUMNS")
 	if global.Conf.Server.DbType == "mysql" {
 		db = db.Where("table_schema= ? ", global.Conf.Gen.Dbname)
 	}
@@ -64,7 +65,7 @@ func (m *devTableColumnModelImpl) FindDbTableColumnList(tableName string) []enti
 	if global.Conf.Server.DbType != "mysql" && global.Conf.Server.DbType != "postgresql" {
 		biz.ErrIsNil(errors.New("只支持mysql和postgresql数据库"), "只支持mysql和postgresql数据库")
 	}
-	db := global.Db.Table("information_schema.columns")
+	db := pkg.Db.Table("information_schema.columns")
 	if global.Conf.Server.DbType == "mysql" {
 		db = db.Where("table_schema= ? ", global.Conf.Gen.Dbname)
 	}
@@ -124,19 +125,19 @@ WHERE
     AND tc.table_schema = 'public'
     AND tc.table_name = ?;`
 	var pkname string
-	err := global.Db.Raw(sql, tableName).Scan(&pkname).Error
+	err := pkg.Db.Raw(sql, tableName).Scan(&pkname).Error
 	return pkname, err
 }
 
 func (m *devTableColumnModelImpl) Insert(dgt entity.DevGenTableColumn) *entity.DevGenTableColumn {
-	err := global.Db.Table(m.table).Create(&dgt).Error
+	err := pkg.Db.Table(m.table).Create(&dgt).Error
 	biz.ErrIsNil(err, "新增生成代码字段表失败")
 	return &dgt
 }
 
 func (m *devTableColumnModelImpl) FindList(data entity.DevGenTableColumn, exclude bool) *[]entity.DevGenTableColumn {
 	list := make([]entity.DevGenTableColumn, 0)
-	db := global.Db.Table(m.table).Where("table_id = ?", data.TableId)
+	db := pkg.Db.Table(m.table).Where("table_id = ?", data.TableId)
 	if exclude {
 		notIn := make([]string, 6)
 		notIn = append(notIn, "id")
@@ -153,14 +154,14 @@ func (m *devTableColumnModelImpl) FindList(data entity.DevGenTableColumn, exclud
 }
 
 func (m *devTableColumnModelImpl) Update(data entity.DevGenTableColumn) *entity.DevGenTableColumn {
-	//err := global.Db.Table(m.table).Model(&data).Updates(&data).Error
-	err := global.Db.Table(m.table).Model(&data).Updates(structs.Map(data)).Error
+	//err := pkg.Db.Table(m.table).Model(&data).Updates(&data).Error
+	err := pkg.Db.Table(m.table).Model(&data).Updates(structs.Map(data)).Error
 	biz.ErrIsNil(err, "修改生成代码字段表失败")
 	return &data
 }
 
 func (m *devTableColumnModelImpl) Delete(tableId []int64) {
-	err := global.Db.Table(m.table).Delete(&entity.DevGenTableColumn{}, "table_id in (?)", tableId).Error
+	err := pkg.Db.Table(m.table).Delete(&entity.DevGenTableColumn{}, "table_id in (?)", tableId).Error
 	biz.ErrIsNil(err, "删除生成代码字段表失败")
 	return
 }

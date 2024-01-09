@@ -4,8 +4,8 @@ import (
 	"EdgeSys/apps/system/entity"
 	"EdgeSys/pkg/global"
 	"errors"
-
 	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 type (
@@ -32,11 +32,11 @@ var SysRoleModelDao SysRoleModel = &sysRoleModel{
 
 func (m *sysRoleModel) Insert(data entity.SysRole) *entity.SysRole {
 	var i int64 = 0
-	global.Db.Table(m.table).Where("(role_name = ? or role_key = ?) and delete_time IS NULL", data.RoleName, data.RoleKey).Count(&i)
+	pkg.Db.Table(m.table).Where("(role_name = ? or role_key = ?) and delete_time IS NULL", data.RoleName, data.RoleKey).Count(&i)
 	biz.IsTrue(i == 0, "角色名称或者角色标识已经存在！")
 
 	data.UpdateBy = ""
-	err := global.Db.Table(m.table).Create(&data).Error
+	err := pkg.Db.Table(m.table).Create(&data).Error
 	biz.ErrIsNil(err, "添加角色失败")
 
 	return &data
@@ -44,7 +44,7 @@ func (m *sysRoleModel) Insert(data entity.SysRole) *entity.SysRole {
 
 func (m *sysRoleModel) FindOne(roleId int64) *entity.SysRole {
 	resData := new(entity.SysRole)
-	biz.ErrIsNil(global.Db.Table(m.table).Where("role_id = ?", roleId).First(resData).Error, "查询角色失败")
+	biz.ErrIsNil(pkg.Db.Table(m.table).Where("role_id = ?", roleId).First(resData).Error, "查询角色失败")
 	return resData
 }
 
@@ -54,7 +54,7 @@ func (m *sysRoleModel) FindListPage(page, pageSize int, data entity.SysRole) (*[
 	var total int64 = 0
 
 	offset := pageSize * (page - 1)
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	// 此处填写 where参数判断
 	if data.RoleId != 0 {
 		db = db.Where("role_id = ?", data.RoleId)
@@ -77,7 +77,7 @@ func (m *sysRoleModel) FindListPage(page, pageSize int, data entity.SysRole) (*[
 
 func (m *sysRoleModel) FindList(data entity.SysRole) *[]entity.SysRole {
 	list := make([]entity.SysRole, 0)
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	// 此处填写 where参数判断
 	if data.RoleName != "" {
 		db = db.Where("role_name like ?", "%"+data.RoleName+"%")
@@ -95,16 +95,16 @@ func (m *sysRoleModel) FindList(data entity.SysRole) *[]entity.SysRole {
 
 func (m *sysRoleModel) Update(data entity.SysRole) *entity.SysRole {
 	update := new(entity.SysRole)
-	biz.ErrIsNil(global.Db.Table(m.table).First(update, data.RoleId).Error, "查询角色失败")
+	biz.ErrIsNil(pkg.Db.Table(m.table).First(update, data.RoleId).Error, "查询角色失败")
 	if data.RoleKey != "" && data.RoleKey != update.RoleKey {
 		biz.ErrIsNil(errors.New("角色标识不允许修改！"), "角色标识不允许修改！")
 	}
-	biz.ErrIsNil(global.Db.Table(m.table).Updates(&data).Error, "修改角色失败")
+	biz.ErrIsNil(pkg.Db.Table(m.table).Updates(&data).Error, "修改角色失败")
 	return &data
 }
 
 func (m *sysRoleModel) Delete(roleIds []int64) {
-	biz.ErrIsNil(global.Db.Table(m.table).Delete(&entity.SysRole{}, "role_id in (?)", roleIds).Error, "删除角色失败")
+	biz.ErrIsNil(pkg.Db.Table(m.table).Delete(&entity.SysRole{}, "role_id in (?)", roleIds).Error, "删除角色失败")
 	return
 }
 
@@ -112,7 +112,7 @@ func (m *sysRoleModel) Delete(roleIds []int64) {
 func (m *sysRoleModel) GetRoleMeunId(data entity.SysRole) []int64 {
 	menuIds := make([]int64, 0)
 	menuList := make([]entity.MenuIdList, 0)
-	err := global.Db.Table("sys_menus").Select("sys_menus.menu_id").Joins("LEFT JOIN sys_role_menus on sys_role_menus.menu_id=sys_menus.menu_id").Where("sys_role_menus.role_id = ? ", data.RoleId).Where("sys_menus.menu_id not in (select sys_menus.parent_id from sys_menus LEFT JOIN sys_role_menus on sys_menus.menu_id=sys_role_menus.menu_id where sys_role_menus.role_id =? )", data.RoleId).Find(&menuList).Error
+	err := pkg.Db.Table("sys_menus").Select("sys_menus.menu_id").Joins("LEFT JOIN sys_role_menus on sys_role_menus.menu_id=sys_menus.menu_id").Where("sys_role_menus.role_id = ? ", data.RoleId).Where("sys_menus.menu_id not in (select sys_menus.parent_id from sys_menus LEFT JOIN sys_role_menus on sys_menus.menu_id=sys_role_menus.menu_id where sys_role_menus.role_id =? )", data.RoleId).Find(&menuList).Error
 
 	biz.ErrIsNil(err, "查询角色菜单列表失败")
 	for i := 0; i < len(menuList); i++ {
@@ -124,7 +124,7 @@ func (m *sysRoleModel) GetRoleMeunId(data entity.SysRole) []int64 {
 func (m *sysRoleModel) GetRoleOrganizationId(data entity.SysRole) []int64 {
 	organizationIds := make([]int64, 0)
 	organizationList := make([]entity.OrganizationIdList, 0)
-	err := global.Db.Table("sys_role_organizations").Select("sys_role_organizations.organization_id").Joins("LEFT JOIN sys_organizations on sys_organizations.organization_id=sys_role_organizations.organization_id").Where("role_id = ? ", data.RoleId).Where(" sys_role_organizations.organization_id not in(select sys_organizations.parent_id from sys_role_organizations LEFT JOIN sys_organizations on sys_organizations.organization_id=sys_role_organizations.organization_id where role_id =? )", data.RoleId).Find(&organizationList).Error
+	err := pkg.Db.Table("sys_role_organizations").Select("sys_role_organizations.organization_id").Joins("LEFT JOIN sys_organizations on sys_organizations.organization_id=sys_role_organizations.organization_id").Where("role_id = ? ", data.RoleId).Where(" sys_role_organizations.organization_id not in(select sys_organizations.parent_id from sys_role_organizations LEFT JOIN sys_organizations on sys_organizations.organization_id=sys_role_organizations.organization_id where role_id =? )", data.RoleId).Find(&organizationList).Error
 	biz.ErrIsNil(err, "查询角色组织列表失败")
 
 	for i := 0; i < len(organizationList); i++ {
@@ -135,7 +135,7 @@ func (m *sysRoleModel) GetRoleOrganizationId(data entity.SysRole) []int64 {
 
 func (m *sysRoleModel) FindOrganizationsByRoleId(roleId int64) (entity.SysRole, error) {
 	var roleData entity.SysRole
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	if global.Conf.Server.DbType == "mysql" {
 		db.Select("sys_roles.data_scope, GROUP_CONCAT(sys_role_organizations.organization_id) as org")
 	} else {

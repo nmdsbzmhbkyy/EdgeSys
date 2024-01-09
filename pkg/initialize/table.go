@@ -6,8 +6,8 @@ import (
 	logEntity "EdgeSys/apps/log/entity"
 	systemEntity "EdgeSys/apps/system/entity"
 	"EdgeSys/pkg/global"
-
 	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 // 初始化时如果没有表创建表
@@ -15,7 +15,7 @@ func InitTable() {
 	m := global.Conf.Server
 	if m.IsInitTable {
 		biz.ErrIsNil(
-			global.Db.AutoMigrate(
+			pkg.Db.AutoMigrate(
 				//casbin.CasbinRule{},
 				systemEntity.SysOrganization{},
 				systemEntity.SysApi{},
@@ -41,6 +41,6 @@ func InitTable() {
 	}
 	// err := global.TdDb.CreateEventTable()
 	// if err != nil {
-	// 	public.Log.Panic(err)
+	// 	pkg.Log.Panic(err)
 	// }
 }

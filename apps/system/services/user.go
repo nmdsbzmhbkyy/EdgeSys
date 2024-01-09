@@ -2,11 +2,10 @@ package services
 
 import (
 	"EdgeSys/apps/system/entity"
-	"EdgeSys/pkg/global"
-
 	"github.com/kakuilan/kgo"
 	"golang.org/x/crypto/bcrypt"
 	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 type (
@@ -33,7 +32,7 @@ var SysUserModelDao SysUserModel = &sysUserModelImpl{
 func (m *sysUserModelImpl) Login(u entity.Login) *entity.SysUser {
 	user := new(entity.SysUser)
 
-	err := global.Db.Table(m.table).Where("username = ? ", u.Username).Find(user)
+	err := pkg.Db.Table(m.table).Where("username = ? ", u.Username).Find(user)
 	biz.ErrIsNil(err.Error, "查询用户信息失败")
 
 	// 验证密码
@@ -49,17 +48,17 @@ func (m *sysUserModelImpl) Insert(data entity.SysUser) *entity.SysUser {
 
 	// check 用户名
 	var count int64
-	global.Db.Table(m.table).Where("username = ? and delete_time IS NULL", data.Username).Count(&count)
+	pkg.Db.Table(m.table).Where("username = ? and delete_time IS NULL", data.Username).Count(&count)
 	biz.IsTrue(count == 0, "账户已存在！")
 
-	biz.ErrIsNil(global.Db.Table(m.table).Create(&data).Error, "添加用户失败")
+	biz.ErrIsNil(pkg.Db.Table(m.table).Create(&data).Error, "添加用户失败")
 	return &data
 }
 
 func (m *sysUserModelImpl) FindOne(data entity.SysUser) *entity.SysUserView {
 	resData := new(entity.SysUserView)
 
-	db := global.Db.Table(m.table).Select([]string{"sys_users.*", "sys_roles.role_name"})
+	db := pkg.Db.Table(m.table).Select([]string{"sys_users.*", "sys_roles.role_name"})
 	db = db.Joins("left join sys_roles on sys_users.role_id=sys_roles.role_id")
 	if data.UserId != 0 {
 		db = db.Where("user_id = ?", data.UserId)
@@ -88,7 +87,7 @@ func (m *sysUserModelImpl) FindListPage(page, pageSize int, data entity.SysUser)
 	list := make([]entity.SysUserPage, 0)
 	var total int64 = 0
 	offset := pageSize * (page - 1)
-	db := global.Db.Table(m.table).Select("sys_users.*,sys_organizations.organization_name")
+	db := pkg.Db.Table(m.table).Select("sys_users.*,sys_organizations.organization_name")
 	db = db.Joins("left join sys_organizations on sys_organizations.organization_id = sys_users.organization_id")
 	// 此处填写 where参数判断
 	if data.Username != "" {
@@ -118,7 +117,7 @@ func (m *sysUserModelImpl) FindListPage(page, pageSize int, data entity.SysUser)
 func (m *sysUserModelImpl) FindList(data entity.SysUser) *[]entity.SysUserView {
 	list := make([]entity.SysUserView, 0)
 	// 此处填写 where参数判断
-	db := global.Db.Table(m.table).Select([]string{"sys_users.*", "sys_roles.role_name"})
+	db := pkg.Db.Table(m.table).Select([]string{"sys_users.*", "sys_roles.role_name"})
 	db = db.Joins("left join sys_roles on sys_users.role_id=sys_roles.role_id")
 	if data.UserId != 0 {
 		db = db.Where("user_id = ?", data.UserId)
@@ -158,18 +157,18 @@ func (m *sysUserModelImpl) Update(data entity.SysUser) *entity.SysUser {
 		data.Password = string(bytes)
 	}
 	update := new(entity.SysUser)
-	biz.ErrIsNil(global.Db.Table(m.table).First(update, data.UserId).Error, "查询用户失败")
+	biz.ErrIsNil(pkg.Db.Table(m.table).First(update, data.UserId).Error, "查询用户失败")
 
 	if data.RoleId == 0 {
 		data.RoleId = update.RoleId
 	}
 
-	biz.ErrIsNil(global.Db.Table(m.table).Updates(&data).Error, "修改用户失败")
+	biz.ErrIsNil(pkg.Db.Table(m.table).Updates(&data).Error, "修改用户失败")
 	return &data
 }
 
 func (m *sysUserModelImpl) Delete(userIds []int64) {
-	biz.ErrIsNil(global.Db.Table(m.table).Delete(&entity.SysUser{}, "user_id in (?)", userIds).Error, "删除用户失败")
+	biz.ErrIsNil(pkg.Db.Table(m.table).Delete(&entity.SysUser{}, "user_id in (?)", userIds).Error, "删除用户失败")
 }
 
 func (m *sysUserModelImpl) SetPwd(data entity.SysUser, pwd entity.SysUserPwd) bool {

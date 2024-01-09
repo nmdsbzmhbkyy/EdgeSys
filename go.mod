@@ -21,7 +21,7 @@ require (
 	gorm.io/driver/mysql v1.2.0
 	gorm.io/gorm v1.22.3
 	mod.miligc.com/edge-common/CommonKit v0.0.1
-	mod.miligc.com/edge-common/edgesys-common v0.0.0-20240108035105-c0e28dfdfb0d
+	mod.miligc.com/edge-common/edgesys-common v0.0.0-20240109033338-fd13c07d45e0
 )
 
 require (
@@ -93,4 +93,5 @@ require (
 	gorm.io/driver/postgres v1.2.3 // indirect
 	gorm.io/driver/sqlserver v1.2.1 // indirect
 	gorm.io/plugin/dbresolver v1.1.0 // indirect
+	mod.miligc.com/edge-common/business-common v0.0.0-20240109034102-387a34d3b2d0 // indirect
 )

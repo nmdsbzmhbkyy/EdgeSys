@@ -3,7 +3,7 @@ package transport
 import (
 	"EdgeSys/pkg/global"
 	"context"
-	public "mod.miligc.com/edge-common/edgesys-common/pkg"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 	"net/http"
 
 	"github.com/emicklei/go-restful/v3"
@@ -36,17 +36,17 @@ func (s *HttpServer) Type() Type {
 }
 
 func (s *HttpServer) Start(ctx context.Context) error {
-	public.Log.Infof("HTTP Server listen: %s", s.Addr)
+	pkg.Log.Infof("HTTP Server listen: %s", s.Addr)
 	go func() {
 		if global.Conf.Server.Tls.Enable {
-			public.Log.Infof("HTTPS Server listen: %s", s.Addr)
+			pkg.Log.Infof("HTTPS Server listen: %s", s.Addr)
 			if err := s.srv.ListenAndServeTLS(global.Conf.Server.Tls.CertFile, global.Conf.Server.Tls.KeyFile); err != nil {
-				public.Log.Errorf("error http serve: %s", err)
+				pkg.Log.Errorf("error http serve: %s", err)
 			}
 		} else {
-			public.Log.Infof("HTTP Server listen: %s", s.Addr)
+			pkg.Log.Infof("HTTP Server listen: %s", s.Addr)
 			if err := s.srv.ListenAndServe(); err != nil {
-				public.Log.Errorf("error http serve: %s", err)
+				pkg.Log.Errorf("error http serve: %s", err)
 			}
 		}
 	}()
@@ -60,9 +60,9 @@ func (s *HttpServer) Stop(ctx context.Context) error {
 type httpLog struct{}
 
 func (t *httpLog) Print(v ...any) {
-	public.Log.Debug(v...)
+	pkg.Log.Debug(v...)
 }
 
 func (t *httpLog) Printf(format string, v ...any) {
-	public.Log.Debugf(format, v...)
+	pkg.Log.Debugf(format, v...)
 }

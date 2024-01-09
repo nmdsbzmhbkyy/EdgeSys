@@ -2,9 +2,8 @@ package services
 
 import (
 	"EdgeSys/apps/system/entity"
-	"EdgeSys/pkg/global"
-
 	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 type (
@@ -27,14 +26,14 @@ var SysDictTypeModelDao SysDictTypeModel = &sysDictTypeModelImpl{
 }
 
 func (m *sysDictTypeModelImpl) Insert(data entity.SysDictType) *entity.SysDictType {
-	err := global.Db.Table(m.table).Create(&data).Error
+	err := pkg.Db.Table(m.table).Create(&data).Error
 	biz.ErrIsNil(err, "新增字典类型失败")
 	return &data
 }
 
 func (m *sysDictTypeModelImpl) FindOne(dictId int64) *entity.SysDictType {
 	resData := new(entity.SysDictType)
-	err := global.Db.Table(m.table).Where("dict_id = ?", dictId).First(resData).Error
+	err := pkg.Db.Table(m.table).Where("dict_id = ?", dictId).First(resData).Error
 	biz.ErrIsNil(err, "查询字典类型信息失败")
 	return resData
 }
@@ -44,7 +43,7 @@ func (m *sysDictTypeModelImpl) FindListPage(page, pageSize int, data entity.SysD
 	var total int64 = 0
 	offset := pageSize * (page - 1)
 
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	// 此处填写 where参数判断
 	if data.DictName != "" {
 		db = db.Where("dict_name like ?", "%"+data.DictName+"%")
@@ -65,7 +64,7 @@ func (m *sysDictTypeModelImpl) FindListPage(page, pageSize int, data entity.SysD
 func (m *sysDictTypeModelImpl) FindList(data entity.SysDictType) *[]entity.SysDictType {
 	list := make([]entity.SysDictType, 0)
 
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	// 此处填写 where参数判断
 	if data.DictName != "" {
 		db = db.Where("dict_name like ?", "%"+data.DictName+"%")
@@ -83,13 +82,13 @@ func (m *sysDictTypeModelImpl) FindList(data entity.SysDictType) *[]entity.SysDi
 }
 
 func (m *sysDictTypeModelImpl) Update(data entity.SysDictType) *entity.SysDictType {
-	err := global.Db.Table(m.table).Where("dict_id = ?", data.DictId).Updates(&data).Error
+	err := pkg.Db.Table(m.table).Where("dict_id = ?", data.DictId).Updates(&data).Error
 	biz.ErrIsNil(err, "修改字典类型信息失败")
 	return &data
 }
 
 func (m *sysDictTypeModelImpl) Delete(dictIds []int64) {
-	err := global.Db.Table(m.table).Delete(&entity.SysDictType{}, "dict_id in (?)", dictIds).Error
+	err := pkg.Db.Table(m.table).Delete(&entity.SysDictType{}, "dict_id in (?)", dictIds).Error
 	biz.ErrIsNil(err, "删除字典类型信息失败")
 	return
 }

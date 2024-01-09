@@ -1,23 +1,19 @@
 package main
 
 import (
-	"EdgeSys/apps/business"
-	"EdgeSys/pkg/cache"
 	"EdgeSys/pkg/config"
 	"EdgeSys/pkg/global"
 	"EdgeSys/pkg/initialize"
 	"EdgeSys/pkg/middleware"
+	"EdgeSys/plugin"
 	"context"
 	"github.com/spf13/cobra"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-	gormlog "gorm.io/gorm/logger"
 	"log"
 	"mod.miligc.com/edge-common/CommonKit/logger"
 	"mod.miligc.com/edge-common/CommonKit/rediscli"
 	"mod.miligc.com/edge-common/CommonKit/restfulx"
 	"mod.miligc.com/edge-common/CommonKit/starter"
-	public "mod.miligc.com/edge-common/edgesys-common/pkg"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 	"os"
 	"os/signal"
 	"syscall"
@@ -33,7 +29,7 @@ var rootCmd = &cobra.Command{
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if configFile != "" {
 			global.Conf = config.InitConfig(configFile)
-			public.Log = logger.InitLog(global.Conf.Log.File.GetFilename(), global.Conf.Log.Level)
+			pkg.Log = logger.InitLog(global.Conf.Log.File.GetFilename(), global.Conf.Log.Level)
 			dbGorm := starter.DbGorm{Type: global.Conf.Server.DbType}
 			if global.Conf.Server.DbType == "mysql" {
 				dbGorm.Dsn = global.Conf.Mysql.Dsn()
@@ -45,22 +41,22 @@ var rootCmd = &cobra.Command{
 				dbGorm.MaxOpenConns = global.Conf.Postgresql.MaxOpenConns
 			}
 			dbGorm.DBLog = global.Conf.Log.DBLog
-			global.Db = dbGorm.GormInit()
-			public.Log.Infof("%s连接成功", global.Conf.Server.DbType)
+			pkg.Db = dbGorm.GormInit()
+			pkg.Log.Infof("%s连接成功", global.Conf.Server.DbType)
 			//初始化业务系统数据库
 			initBusinessDb()
 			client, err := rediscli.NewRedisClient(global.Conf.Redis.Host, global.Conf.Redis.Password, global.Conf.Redis.Port, global.Conf.Redis.Db)
 			if err != nil {
-				public.Log.Panic("Redis连接错误")
+				pkg.Log.Panic("Redis连接错误")
 			} else {
-				public.Log.Info("Redis连接成功")
+				pkg.Log.Info("Redis连接成功")
 			}
-			cache.RedisDb = client
+			pkg.RedisDb = client
 			initialize.InitTable()
 			// 初始化事件监听
 			go initialize.InitEvents()
 		} else {
-			public.Log.Panic("请配置config")
+			pkg.Log.Panic("请配置config")
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -72,11 +68,11 @@ var rootCmd = &cobra.Command{
 
 		app := initialize.InitRouter()
 		if global.Conf.Server.LoadMethod == "debug" {
-			business.InitModule{}.InitPluginDebug(app.Container)
+			plugin.InitModule{}.InitPluginDebug(app.Container)
 		} else {
-			business.InitModule{}.InitPlugin(app.Container)
+			plugin.InitModule{}.InitPlugin(app.Container)
 		}
-		public.Log.Info("路由初始化完成")
+		pkg.Log.Info("路由初始化完成")
 		app.Start(context.TODO())
 
 		stop := make(chan os.Signal, 1)
@@ -91,20 +87,13 @@ var rootCmd = &cobra.Command{
 
 func initBusinessDb() {
 	//连接业务系统数据库
-	mysqlConfig := mysql.Config{
-		DSN:                       global.Conf.Mysql.Msn(), // DSN data source name
-		DefaultStringSize:         191,                     // string 类型字段的默认长度
-		DisableDatetimePrecision:  true,                    // 禁用 datetime 精度，MySQL 5.6 之前的数据库不支持
-		DontSupportRenameIndex:    true,                    // 重命名索引时采用删除并新建的方式，MySQL 5.7 之前的数据库和 MariaDB 不支持重命名索引
-		DontSupportRenameColumn:   true,                    // 用 `change` 重命名列，MySQL 8 之前的数据库和 MariaDB 不支持重命名列
-		SkipInitializeWithVersion: false,                   // 根据版本自动配置
-	}
-	ormConfig := &gorm.Config{Logger: gormlog.Default.LogMode(gormlog.Info)}
-	milidbGorm, _ := gorm.Open(mysql.New(mysqlConfig), ormConfig)
-	public.Log.Infof("连接mysql [%s]", global.Conf.Mysql.Msn())
-	global.MiliDb = milidbGorm
-	public.Log.Infof("%s连接成功", global.Conf.Server.DbType)
-
+	//dbGorm := starter.DbGorm{Type: global.Conf.Server.DbType}
+	//dbGorm.Dsn = global.Conf.Mysql.Msn()
+	//dbGorm.MaxIdleConns = global.Conf.Mysql.MaxIdleConns
+	//dbGorm.MaxOpenConns = global.Conf.Mysql.MaxOpenConns
+	//dbGorm.DBLog = global.Conf.Log.DBLog
+	//global.MiliDb = dbGorm.GormInit()
+	//pkg.Log.Infof("%s连接成功", global.Conf.Server.DbType)
 }
 
 func init() {

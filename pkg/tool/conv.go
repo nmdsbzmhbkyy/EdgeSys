@@ -2,7 +2,7 @@ package tool
 
 import (
 	"encoding/json"
-	public "mod.miligc.com/edge-common/edgesys-common/pkg"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 	"reflect"
 	"strings"
 	"time"
@@ -131,7 +131,7 @@ func TimeToFormat(val interface{}) string {
 		// 如果是字符串类型，将其解析为时间对象
 		t, err := time.Parse("2006-01-02 15:04:05", v)
 		if err != nil {
-			public.Log.Error("时间格式非标准格式")
+			pkg.Log.Error("时间格式非标准格式")
 			return ""
 		}
 		// 格式化时间字符串

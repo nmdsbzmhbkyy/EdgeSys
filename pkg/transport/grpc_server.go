@@ -3,7 +3,7 @@ package transport
 import (
 	"context"
 	"fmt"
-	public "mod.miligc.com/edge-common/edgesys-common/pkg"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 	"net"
 
 	"google.golang.org/grpc"
@@ -34,10 +34,10 @@ func (s *GrpcServer) Start(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("error listen addr: %w", err)
 	}
-	public.Log.Debugf("GRPC Server listen: %s", s.Addr)
+	pkg.Log.Debugf("GRPC Server listen: %s", s.Addr)
 	go func() {
 		if err := s.srv.Serve(l); err != nil {
-			public.Log.Errorf("error http serve: %s", err)
+			pkg.Log.Errorf("error http serve: %s", err)
 		}
 	}()
 	return nil

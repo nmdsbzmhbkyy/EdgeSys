@@ -2,9 +2,8 @@ package services
 
 import (
 	"EdgeSys/apps/system/entity"
-	"EdgeSys/pkg/global"
-
 	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 type (
@@ -27,14 +26,14 @@ var SysPostModelDao SysPostModel = &sysPostModelImpl{
 }
 
 func (m *sysPostModelImpl) Insert(data entity.SysPost) *entity.SysPost {
-	err := global.Db.Table(m.table).Create(&data).Error
+	err := pkg.Db.Table(m.table).Create(&data).Error
 	biz.ErrIsNil(err, "添加岗位失败")
 	return &data
 }
 
 func (m *sysPostModelImpl) FindOne(postId int64) *entity.SysPost {
 	resData := new(entity.SysPost)
-	err := global.Db.Table(m.table).Where("post_id = ?", postId).First(resData).Error
+	err := pkg.Db.Table(m.table).Where("post_id = ?", postId).First(resData).Error
 	biz.ErrIsNil(err, "查询岗位失败")
 	return resData
 }
@@ -43,7 +42,7 @@ func (m *sysPostModelImpl) FindListPage(page, pageSize int, data entity.SysPost)
 	list := make([]entity.SysPost, 0)
 	var total int64 = 0
 	offset := pageSize * (page - 1)
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	// 此处填写 where参数判断
 	if data.PostId != 0 {
 		db = db.Where("post_id = ?", data.PostId)
@@ -66,7 +65,7 @@ func (m *sysPostModelImpl) FindListPage(page, pageSize int, data entity.SysPost)
 
 func (m *sysPostModelImpl) FindList(data entity.SysPost) *[]entity.SysPost {
 	list := make([]entity.SysPost, 0)
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	// 此处填写 where参数判断
 	if data.PostId != 0 {
 		db = db.Where("post_id = ?", data.PostId)
@@ -86,10 +85,10 @@ func (m *sysPostModelImpl) FindList(data entity.SysPost) *[]entity.SysPost {
 }
 
 func (m *sysPostModelImpl) Update(data entity.SysPost) *entity.SysPost {
-	biz.ErrIsNil(global.Db.Table(m.table).Updates(&data).Error, "修改岗位失败")
+	biz.ErrIsNil(pkg.Db.Table(m.table).Updates(&data).Error, "修改岗位失败")
 	return &data
 }
 
 func (m *sysPostModelImpl) Delete(postIds []int64) {
-	biz.ErrIsNil(global.Db.Table(m.table).Delete(&entity.SysPost{}, "post_id in (?)", postIds).Error, "删除岗位失败")
+	biz.ErrIsNil(pkg.Db.Table(m.table).Delete(&entity.SysPost{}, "post_id in (?)", postIds).Error, "删除岗位失败")
 }

@@ -2,9 +2,8 @@ package services
 
 import (
 	"EdgeSys/apps/system/entity"
-	"EdgeSys/pkg/global"
-
 	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 type (
@@ -27,14 +26,14 @@ var SysSysConfigModelDao SysConfigModel = &sysSysConfigModelImpl{
 }
 
 func (m *sysSysConfigModelImpl) Insert(data entity.SysConfig) *entity.SysConfig {
-	err := global.Db.Table(m.table).Create(&data).Error
+	err := pkg.Db.Table(m.table).Create(&data).Error
 	biz.ErrIsNil(err, "新增配置失败")
 	return &data
 }
 
 func (m *sysSysConfigModelImpl) FindOne(configId int64) *entity.SysConfig {
 	resData := new(entity.SysConfig)
-	err := global.Db.Table(m.table).Where("config_id = ?", configId).First(resData).Error
+	err := pkg.Db.Table(m.table).Where("config_id = ?", configId).First(resData).Error
 	biz.ErrIsNil(err, "查询配置信息失败")
 	return resData
 }
@@ -44,7 +43,7 @@ func (m *sysSysConfigModelImpl) FindListPage(page, pageSize int, data entity.Sys
 	var total int64 = 0
 	offset := pageSize * (page - 1)
 
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	// 此处填写 where参数判断
 	if data.ConfigName != "" {
 		db = db.Where("config_name like ?", "%"+data.ConfigName+"%")
@@ -65,7 +64,7 @@ func (m *sysSysConfigModelImpl) FindListPage(page, pageSize int, data entity.Sys
 func (m *sysSysConfigModelImpl) FindList(data entity.SysConfig) *[]entity.SysConfig {
 	list := make([]entity.SysConfig, 0)
 
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	// 此处填写 where参数判断
 	if data.ConfigName != "" {
 		db = db.Where("config_name like ?", "%"+data.ConfigName+"%")
@@ -83,13 +82,13 @@ func (m *sysSysConfigModelImpl) FindList(data entity.SysConfig) *[]entity.SysCon
 }
 
 func (m *sysSysConfigModelImpl) Update(data entity.SysConfig) *entity.SysConfig {
-	err := global.Db.Table(m.table).Model(&data).Updates(&data).Error
+	err := pkg.Db.Table(m.table).Model(&data).Updates(&data).Error
 	biz.ErrIsNil(err, "修改配置信息失败")
 	return &data
 }
 
 func (m *sysSysConfigModelImpl) Delete(configIds []int64) {
-	err := global.Db.Table(m.table).Delete(&entity.SysConfig{}, "config_id in (?)", configIds).Error
+	err := pkg.Db.Table(m.table).Delete(&entity.SysConfig{}, "config_id in (?)", configIds).Error
 	biz.ErrIsNil(err, "删除配置信息失败")
 	return
 }

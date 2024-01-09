@@ -9,15 +9,14 @@
 package initialize
 
 import (
-	"EdgeSys/pkg/global"
-	public "mod.miligc.com/edge-common/edgesys-common/pkg"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 // 初始化事件监听
 func InitEvents() {
 	// 监听**链改变 更新**规则
-	global.EventEmitter.On("", func() {
-		public.Log.Infof("**链变更")
+	pkg.EventBus.On("", func() {
+		pkg.Log.Infof("**链变更")
 		// ... 更新
 	})
 }

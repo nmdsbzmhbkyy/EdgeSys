@@ -2,9 +2,8 @@ package services
 
 import (
 	"EdgeSys/apps/log/entity"
-	"EdgeSys/pkg/global"
-
 	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 type (
@@ -26,13 +25,13 @@ var LogOperModelDao LogOperModel = &logLogOperModelImpl{
 }
 
 func (m *logLogOperModelImpl) Insert(data entity.LogOper) *entity.LogOper {
-	global.Db.Table(m.table).Create(&data)
+	pkg.Db.Table(m.table).Create(&data)
 	return &data
 }
 
 func (m *logLogOperModelImpl) FindOne(operId int64) *entity.LogOper {
 	resData := new(entity.LogOper)
-	err := global.Db.Table(m.table).Where("oper_id = ?", operId).First(resData).Error
+	err := pkg.Db.Table(m.table).Where("oper_id = ?", operId).First(resData).Error
 	biz.ErrIsNil(err, "查询操作日志信息失败")
 	return resData
 }
@@ -41,7 +40,7 @@ func (m *logLogOperModelImpl) FindListPage(page, pageSize int, data entity.LogOp
 	list := make([]entity.LogOper, 0)
 	var total int64 = 0
 	offset := pageSize * (page - 1)
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	// 此处填写 where参数判断
 	if data.BusinessType != "" {
 		db = db.Where("business_type = ?", data.BusinessType)
@@ -63,11 +62,11 @@ func (m *logLogOperModelImpl) FindListPage(page, pageSize int, data entity.LogOp
 }
 
 func (m *logLogOperModelImpl) Delete(operIds []int64) {
-	err := global.Db.Table(m.table).Delete(&entity.LogOper{}, "oper_id in (?)", operIds).Error
+	err := pkg.Db.Table(m.table).Delete(&entity.LogOper{}, "oper_id in (?)", operIds).Error
 	biz.ErrIsNil(err, "删除操作日志信息失败")
 	return
 }
 
 func (m *logLogOperModelImpl) DeleteAll() {
-	global.Db.Exec("DELETE FROM log_opers")
+	pkg.Db.Exec("DELETE FROM log_opers")
 }

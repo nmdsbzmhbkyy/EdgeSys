@@ -534,6 +534,7 @@ func GenConfigure(tableId, parentId int) {
 		IsAffix:     "1",
 		Permission:  fmt.Sprintf("%s:%s:list", tab.PackageName, tab.BusinessName),
 		Status:      "0",
+		MenuGroup:   tab.MenuGroup,
 		CreateBy:    "admin",
 	}
 	insert := sysServices.SysMenuModelDao.Insert(menu)

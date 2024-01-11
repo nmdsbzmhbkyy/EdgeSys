@@ -2,9 +2,8 @@ package services
 
 import (
 	"EdgeSys/apps/system/entity"
-	"EdgeSys/pkg/global"
-
 	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 type (
@@ -26,14 +25,14 @@ var SysNoticeModelDao SysNoticeModel = &sysNoticeModelImpl{
 }
 
 func (m *sysNoticeModelImpl) Insert(data entity.SysNotice) *entity.SysNotice {
-	err := global.Db.Table(m.table).Create(&data).Error
+	err := pkg.Db.Table(m.table).Create(&data).Error
 	biz.ErrIsNil(err, "添加通知失败")
 	return &data
 }
 
 func (m *sysNoticeModelImpl) FindOne(postId int64) *entity.SysNotice {
 	resData := new(entity.SysNotice)
-	err := global.Db.Table(m.table).Where("post_id = ?", postId).First(resData).Error
+	err := pkg.Db.Table(m.table).Where("post_id = ?", postId).First(resData).Error
 	biz.ErrIsNil(err, "查询通知失败")
 	return resData
 }
@@ -42,7 +41,7 @@ func (m *sysNoticeModelImpl) FindListPage(page, pageSize int, data entity.SysNot
 	list := make([]entity.SysNotice, 0)
 	var total int64 = 0
 	offset := pageSize * (page - 1)
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	// 此处填写 where参数判断
 	if data.Title != "" {
 		db = db.Where("title like ?", "%"+data.Title+"%")
@@ -61,10 +60,10 @@ func (m *sysNoticeModelImpl) FindListPage(page, pageSize int, data entity.SysNot
 }
 
 func (m *sysNoticeModelImpl) Update(data entity.SysNotice) *entity.SysNotice {
-	biz.ErrIsNil(global.Db.Table(m.table).Updates(&data).Error, "修改通知失败")
+	biz.ErrIsNil(pkg.Db.Table(m.table).Updates(&data).Error, "修改通知失败")
 	return &data
 }
 
 func (m *sysNoticeModelImpl) Delete(postIds []int64) {
-	biz.ErrIsNil(global.Db.Table(m.table).Delete(&entity.SysNotice{}, "notice_id in (?)", postIds).Error, "删除通知失败")
+	biz.ErrIsNil(pkg.Db.Table(m.table).Delete(&entity.SysNotice{}, "notice_id in (?)", postIds).Error, "删除通知失败")
 }

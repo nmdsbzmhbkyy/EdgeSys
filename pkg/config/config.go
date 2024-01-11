@@ -45,6 +45,7 @@ type Config struct {
 	Casbin     *Casbin     `yaml:"casbin"`
 	Gen        *Gen        `yaml:"gen"`
 	Log        *Log        `yaml:"log"`
+	Module     []string    `yaml:"module"`
 }
 
 // 配置文件内容校验

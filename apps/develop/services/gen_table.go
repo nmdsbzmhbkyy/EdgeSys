@@ -5,9 +5,9 @@ import (
 	"EdgeSys/pkg/global"
 	"EdgeSys/pkg/global/model"
 	"errors"
-
 	"mod.miligc.com/edge-common/CommonKit/biz"
 	"mod.miligc.com/edge-common/CommonKit/utils"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 /**
@@ -48,7 +48,7 @@ func (m *devGenTableModelImpl) FindDbTablesListPage(page, pageSize int, data ent
 		biz.ErrIsNil(errors.New("只支持mysql和postgresql数据库"), "只支持mysql和postgresql数据库")
 	}
 
-	db := global.Db.Table("information_schema.tables")
+	db := pkg.Db.Table("information_schema.tables")
 	if global.Conf.Server.DbType == "mysql" {
 		db = db.Where("table_schema= ? ", global.Conf.Gen.Dbname)
 	}
@@ -78,7 +78,7 @@ func (m *devGenTableModelImpl) FindDbTableOne(tableName string) *entity.DBTables
 	if global.Conf.Server.DbType != "mysql" && global.Conf.Server.DbType != "postgresql" {
 		biz.ErrIsNil(errors.New("只支持mysql和postgresql数据库"), "只支持mysql和postgresql数据库")
 	}
-	db := global.Db.Table("information_schema.tables")
+	db := pkg.Db.Table("information_schema.tables")
 	if global.Conf.Server.DbType == "mysql" {
 		db = db.Where("table_schema= ? ", global.Conf.Gen.Dbname)
 	}
@@ -92,7 +92,7 @@ func (m *devGenTableModelImpl) FindDbTableOne(tableName string) *entity.DBTables
 }
 
 func (m *devGenTableModelImpl) Insert(dgt entity.DevGenTable) {
-	err := global.Db.Table(m.table).Create(&dgt).Error
+	err := pkg.Db.Table(m.table).Create(&dgt).Error
 	biz.ErrIsNil(err, "新增生成代码表失败")
 	for i := 0; i < len(dgt.Columns); i++ {
 		dgt.Columns[i].TableId = dgt.TableId
@@ -105,7 +105,7 @@ func (m *devGenTableModelImpl) Insert(dgt entity.DevGenTable) {
 
 func (m *devGenTableModelImpl) FindOne(data entity.DevGenTable, exclude bool) *entity.DevGenTable {
 	resData := new(entity.DevGenTable)
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	if data.TableName != "" {
 		db = db.Where("table_name = ?", data.TableName)
 	}
@@ -124,7 +124,7 @@ func (m *devGenTableModelImpl) FindOne(data entity.DevGenTable, exclude bool) *e
 
 func (m *devGenTableModelImpl) FindTree(data entity.DevGenTable) *[]entity.DevGenTable {
 	resData := make([]entity.DevGenTable, 0)
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 
 	if data.TableName != "" {
 		db = db.Where("table_name = ?", data.TableName)
@@ -154,7 +154,7 @@ func (m *devGenTableModelImpl) FindListPage(page, pageSize int, data entity.DevG
 	var total int64 = 0
 	offset := pageSize * (page - 1)
 
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	// 此处填写 where参数判断
 	if data.TableName != "" {
 		db = db.Where("table_name = ?", data.TableName)
@@ -172,7 +172,7 @@ func (m *devGenTableModelImpl) FindListPage(page, pageSize int, data entity.DevG
 }
 
 func (m *devGenTableModelImpl) Update(data entity.DevGenTable) *entity.DevGenTable {
-	err := global.Db.Table(m.table).Model(&data).Updates(&data).Error
+	err := pkg.Db.Table(m.table).Model(&data).Updates(&data).Error
 	biz.ErrIsNil(err, "修改生成代码信息失败")
 
 	tableNames := make([]string, 0)
@@ -185,7 +185,7 @@ func (m *devGenTableModelImpl) Update(data entity.DevGenTable) *entity.DevGenTab
 	tables := make([]entity.DevGenTable, 0)
 	tableMap := make(map[string]*entity.DevGenTable)
 	if len(tableNames) > 0 {
-		err = global.Db.Table(m.table).Where("table_name in (?)", tableNames).Find(&tables).Error
+		err = pkg.Db.Table(m.table).Where("table_name in (?)", tableNames).Find(&tables).Error
 		biz.ErrIsNil(err, "关联表不存在")
 		for i := range tables {
 			tableMap[tables[i].TableName] = &tables[i]
@@ -210,7 +210,7 @@ func (m *devGenTableModelImpl) Update(data entity.DevGenTable) *entity.DevGenTab
 func (e *devGenTableModelImpl) DeleteTables(tableId int64) bool {
 	var err error
 	success := false
-	tx := global.Db.Begin()
+	tx := pkg.Db.Begin()
 	defer func() {
 		if err != nil {
 			tx.Rollback()
@@ -229,7 +229,7 @@ func (e *devGenTableModelImpl) DeleteTables(tableId int64) bool {
 }
 
 func (m *devGenTableModelImpl) Delete(configIds []int64) {
-	err := global.Db.Table(m.table).Delete(&entity.DevGenTable{}, "table_id in (?)", configIds).Error
+	err := pkg.Db.Table(m.table).Delete(&entity.DevGenTable{}, "table_id in (?)", configIds).Error
 	biz.ErrIsNil(err, "删除生成代码信息失败")
 	DevTableColumnModelDao.Delete(configIds)
 	return

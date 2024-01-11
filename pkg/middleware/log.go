@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"mod.miligc.com/edge-common/CommonKit/biz"
-	"mod.miligc.com/edge-common/CommonKit/logger"
 	"mod.miligc.com/edge-common/CommonKit/restfulx"
 	"mod.miligc.com/edge-common/CommonKit/utils"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 	"reflect"
 	"runtime/debug"
 )
@@ -28,10 +28,10 @@ func LogHandler(rc *restfulx.ReqCtx) error {
 	lfs[req.Method] = req.URL.Path
 
 	if err := rc.Err; err != nil {
-		logger.Log.WithFields(lfs).Error(getErrMsg(rc, err))
+		pkg.Log.WithFields(lfs).Error(getErrMsg(rc, err))
 		return nil
 	}
-	logger.Log.WithFields(lfs).Info(getLogMsg(rc))
+	pkg.Log.WithFields(lfs).Info(getLogMsg(rc))
 	return nil
 }
 

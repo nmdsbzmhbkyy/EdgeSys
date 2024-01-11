@@ -2,9 +2,8 @@ package services
 
 import (
 	"EdgeSys/apps/system/entity"
-	"EdgeSys/pkg/global"
-
 	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 type (
@@ -27,14 +26,14 @@ var SysDictDataModelDao SysDictDataModel = &sysDictDataModelImpl{
 }
 
 func (m *sysDictDataModelImpl) Insert(data entity.SysDictData) *entity.SysDictData {
-	err := global.Db.Table(m.table).Create(&data).Error
+	err := pkg.Db.Table(m.table).Create(&data).Error
 	biz.ErrIsNil(err, "新增字典数据失败")
 	return &data
 }
 
 func (m *sysDictDataModelImpl) FindOne(codeId int64) *entity.SysDictData {
 	resData := new(entity.SysDictData)
-	err := global.Db.Table(m.table).Where("dict_code = ?", codeId).First(resData).Error
+	err := pkg.Db.Table(m.table).Where("dict_code = ?", codeId).First(resData).Error
 	biz.ErrIsNil(err, "查询字典数据信息失败")
 	return resData
 }
@@ -44,7 +43,7 @@ func (m *sysDictDataModelImpl) FindListPage(page, pageSize int, data entity.SysD
 	var total int64 = 0
 	offset := pageSize * (page - 1)
 
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	// 此处填写 where参数判断
 	if data.DictLabel != "" {
 		db = db.Where("dict_label = ?", data.DictLabel)
@@ -65,7 +64,7 @@ func (m *sysDictDataModelImpl) FindListPage(page, pageSize int, data entity.SysD
 func (m *sysDictDataModelImpl) FindList(data entity.SysDictData) *[]entity.SysDictData {
 	list := make([]entity.SysDictData, 0)
 
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	// 此处填写 where参数判断
 	if data.DictLabel != "" {
 		db = db.Where("dict_label like ?", "%"+data.DictLabel+"%")
@@ -83,13 +82,13 @@ func (m *sysDictDataModelImpl) FindList(data entity.SysDictData) *[]entity.SysDi
 }
 
 func (m *sysDictDataModelImpl) Update(data entity.SysDictData) *entity.SysDictData {
-	err := global.Db.Table(m.table).Where("dict_code = ?", data.DictCode).Updates(&data).Error
+	err := pkg.Db.Table(m.table).Where("dict_code = ?", data.DictCode).Updates(&data).Error
 	biz.ErrIsNil(err, "修改字典数据信息失败")
 	return &data
 }
 
 func (m *sysDictDataModelImpl) Delete(codeIds []int64) {
-	err := global.Db.Table(m.table).Delete(&entity.SysOrganization{}, "dict_code in (?)", codeIds).Error
+	err := pkg.Db.Table(m.table).Delete(&entity.SysOrganization{}, "dict_code in (?)", codeIds).Error
 	biz.ErrIsNil(err, "删除字典数据信息失败")
 	return
 }

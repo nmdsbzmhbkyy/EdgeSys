@@ -2,10 +2,9 @@ package services
 
 import (
 	"EdgeSys/apps/job/entity"
-	"EdgeSys/pkg/global"
 	"EdgeSys/pkg/global/model"
-
 	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 type (
@@ -26,7 +25,7 @@ var JobLogModelDao JobLogModel = &JobLogModelImpl{
 }
 
 func (m *JobLogModelImpl) Insert(data entity.JobLog) *entity.JobLog {
-	global.Db.Table(m.table).Create(&data)
+	pkg.Db.Table(m.table).Create(&data)
 	return &data
 }
 
@@ -34,7 +33,7 @@ func (m *JobLogModelImpl) FindListPage(page, pageSize int, data entity.JobLog) (
 	list := make([]entity.JobLog, 0)
 	var total int64 = 0
 	offset := pageSize * (page - 1)
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	// 此处填写 where参数判断
 	if data.Status != "" {
 		db = db.Where("status = ?", data.Status)
@@ -54,11 +53,11 @@ func (m *JobLogModelImpl) FindListPage(page, pageSize int, data entity.JobLog) (
 }
 
 func (m *JobLogModelImpl) Delete(logIds []int64) {
-	err := global.Db.Table(m.table).Delete(&entity.JobLog{}, "id in (?)", logIds).Error
+	err := pkg.Db.Table(m.table).Delete(&entity.JobLog{}, "id in (?)", logIds).Error
 	biz.ErrIsNil(err, "删除登录日志信息失败")
 	return
 }
 
 func (m *JobLogModelImpl) DeleteAll() {
-	global.Db.Exec("DELETE FROM job_logs")
+	pkg.Db.Exec("DELETE FROM job_logs")
 }

@@ -16,6 +16,7 @@ type Server struct {
 	Tls         *Tls           `yaml:"tls"`
 	Static      *[]*Static     `yaml:"static"`
 	StaticFile  *[]*StaticFile `yaml:"static-file"`
+	LoadMethod  string         `yaml:"load-method"`
 }
 
 func (s *Server) GetPort() string {

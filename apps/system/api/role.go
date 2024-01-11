@@ -6,12 +6,12 @@ import (
 	"EdgeSys/pkg/global"
 	"errors"
 	"fmt"
-
 	"mod.miligc.com/edge-common/CommonKit/biz"
 	"mod.miligc.com/edge-common/CommonKit/casbin"
 	"mod.miligc.com/edge-common/CommonKit/model"
 	"mod.miligc.com/edge-common/CommonKit/restfulx"
 	"mod.miligc.com/edge-common/CommonKit/utils"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 type RoleApi struct {
@@ -147,7 +147,7 @@ func (r *RoleApi) DeleteRole(rc *restfulx.ReqCtx) {
 			ca := casbin.CasbinS{ModelPath: global.Conf.Casbin.ModelPath}
 			ca.ClearCasbin(0, role.RoleKey)
 		} else {
-			global.Log.Info(fmt.Sprintf("role:%d 存在用户无法删除", rid))
+			pkg.Log.Info(fmt.Sprintf("role:%d 存在用户无法删除", rid))
 		}
 	}
 	if len(delList) == 0 {

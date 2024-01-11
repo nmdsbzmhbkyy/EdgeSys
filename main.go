@@ -1,11 +1,11 @@
 package main
 
 import (
-	"EdgeSys/pkg/cache"
 	"EdgeSys/pkg/config"
 	"EdgeSys/pkg/global"
 	"EdgeSys/pkg/initialize"
 	"EdgeSys/pkg/middleware"
+	"EdgeSys/plugin"
 	"context"
 	"github.com/spf13/cobra"
 	"log"
@@ -13,6 +13,7 @@ import (
 	"mod.miligc.com/edge-common/CommonKit/rediscli"
 	"mod.miligc.com/edge-common/CommonKit/restfulx"
 	"mod.miligc.com/edge-common/CommonKit/starter"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 	"os"
 	"os/signal"
 	"syscall"
@@ -28,7 +29,7 @@ var rootCmd = &cobra.Command{
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if configFile != "" {
 			global.Conf = config.InitConfig(configFile)
-			global.Log = logger.InitLog(global.Conf.Log.File.GetFilename(), global.Conf.Log.Level)
+			pkg.Log = logger.InitLog(global.Conf.Log.File.GetFilename(), global.Conf.Log.Level)
 			dbGorm := starter.DbGorm{Type: global.Conf.Server.DbType}
 			if global.Conf.Server.DbType == "mysql" {
 				dbGorm.Dsn = global.Conf.Mysql.Dsn()
@@ -40,20 +41,22 @@ var rootCmd = &cobra.Command{
 				dbGorm.MaxOpenConns = global.Conf.Postgresql.MaxOpenConns
 			}
 			dbGorm.DBLog = global.Conf.Log.DBLog
-			global.Db = dbGorm.GormInit()
-			global.Log.Infof("%s连接成功", global.Conf.Server.DbType)
+			pkg.Db = dbGorm.GormInit()
+			pkg.Log.Infof("%s连接成功", global.Conf.Server.DbType)
+			//初始化业务系统数据库
+			initBusinessDb()
 			client, err := rediscli.NewRedisClient(global.Conf.Redis.Host, global.Conf.Redis.Password, global.Conf.Redis.Port, global.Conf.Redis.Db)
 			if err != nil {
-				global.Log.Panic("Redis连接错误")
+				pkg.Log.Panic("Redis连接错误")
 			} else {
-				global.Log.Info("Redis连接成功")
+				pkg.Log.Info("Redis连接成功")
 			}
-			cache.RedisDb = client
+			pkg.RedisDb = client
 			initialize.InitTable()
 			// 初始化事件监听
 			go initialize.InitEvents()
 		} else {
-			global.Log.Panic("请配置config")
+			pkg.Log.Panic("请配置config")
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -64,7 +67,12 @@ var rootCmd = &cobra.Command{
 		restfulx.UseAfterHandlerInterceptor(middleware.OperationHandler)
 
 		app := initialize.InitRouter()
-		global.Log.Info("路由初始化完成")
+		if global.Conf.Server.LoadMethod == "debug" {
+			plugin.InitModule{}.InitPluginDebug(app.Container)
+		} else {
+			plugin.InitModule{}.InitPlugin(app.Container)
+		}
+		pkg.Log.Info("路由初始化完成")
 		app.Start(context.TODO())
 
 		stop := make(chan os.Signal, 1)
@@ -75,6 +83,17 @@ var rootCmd = &cobra.Command{
 			os.Exit(-3)
 		}
 	},
+}
+
+func initBusinessDb() {
+	//连接业务系统数据库
+	//dbGorm := starter.DbGorm{Type: global.Conf.Server.DbType}
+	//dbGorm.Dsn = global.Conf.Mysql.Msn()
+	//dbGorm.MaxIdleConns = global.Conf.Mysql.MaxIdleConns
+	//dbGorm.MaxOpenConns = global.Conf.Mysql.MaxOpenConns
+	//dbGorm.DBLog = global.Conf.Log.DBLog
+	//global.MiliDb = dbGorm.GormInit()
+	//pkg.Log.Infof("%s连接成功", global.Conf.Server.DbType)
 }
 
 func init() {

@@ -1,8 +1,8 @@
 package websocket
 
 import (
-	"EdgeSys/pkg/global"
 	"fmt"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 	"net/http"
 	"strings"
 
@@ -27,7 +27,7 @@ func NewWebsocket(writer http.ResponseWriter, r *http.Request, header http.Heade
 		return nil, err
 	}
 	ws.SetCloseHandler(func(code int, text string) error {
-		global.Log.Info(fmt.Sprintf("websocket 连接关闭,code: %d, text: %s", code, text))
+		pkg.Log.Info(fmt.Sprintf("websocket 连接关闭,code: %d, text: %s", code, text))
 		return ws.Close()
 	})
 

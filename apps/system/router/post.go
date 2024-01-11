@@ -75,5 +75,12 @@ func InitPostRouter(container *restful.Container) {
 		Param(ws.QueryParameter("postCode", "postCode").DataType("string")).
 		Metadata(restfulspec.KeyOpenAPITags, tags))
 
+	ws.Route(ws.POST("/import").To(func(request *restful.Request, response *restful.Response) {
+		restfulx.NewReqCtx(request, response).WithLog("导入岗位信息").Handle(s.ImportPost)
+	}).
+		Doc("导入岗位信息").
+		Metadata(restfulspec.KeyOpenAPITags, tags).
+		Reads(entity.SysPost{}))
+
 	container.Add(ws)
 }

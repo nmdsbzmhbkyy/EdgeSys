@@ -42,3 +42,23 @@ export function del{{.FunctionName}}({{.PkJsonField}}: string) {
 		method: 'delete'
 	})
 }
+
+
+// 导出{{.FunctionName}}
+export function export{{.FunctionName}}(query: any) {
+	return request({
+		url: '/{{.PackageName}}/{{.BusinessName}}/' + export,
+		method: 'get',
+        params: query
+	})
+}
+
+// 导入{{.FunctionName}}
+export function import{{.FunctionName}}(data:any) {
+	return request({
+		url: '/{{.PackageName}}/{{.BusinessName}}/' + import ,
+		method: 'post',
+		data: data
+	})
+}
+

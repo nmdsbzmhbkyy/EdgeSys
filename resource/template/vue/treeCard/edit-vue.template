@@ -27,7 +27,6 @@ const props = defineProps({
 })
 
 const { proxy } = getCurrentInstance() as any;
-const ruleFormRef = ref<HTMLElement | null>(null);
 {{- range $index, $column := .Columns -}}
 {{- if ne $column.DictType "" }}
 // {{$column.JsonField}}Options字典数据

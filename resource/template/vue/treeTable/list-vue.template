@@ -1,64 +1,93 @@
 <template>
   <div class="app-container">
-    <el-card shadow="always">
-    <!-- 查询 -->
-    <mi-search-form :columns="state.columns" labelWidth="68px" @search="handleQuery" @reset="resetQuery"></mi-search-form>
-    </el-card>
-    <el-card class="box-card">
-        <template #header>
-           <div class="card-header">
-             <span class="card-header-text">{{.TableComment}}列表</span>
-             <div>
-               <el-button
-                  type="primary"
-                  plain
-                  v-auth="'{{.PackageName}}:{{.BusinessName}}:add'"
-                  @click="onOpenAddModule"
-                  ><SvgIcon name="elementPlus" />新增</el-button>
-               <el-button
-                 type="danger"
-                 plain
-                 v-auth="'{{.PackageName}}:{{.BusinessName}}:delete'"
-                 :disabled="state.multiple"
-                 @click="onTabelRowDel"
-                 ><SvgIcon name="elementDelete" />删除</el-button>
-             </div>
-           </div>
-        </template>
-    <!--数据表格-->
-    <mi-table
-        :table-data=state.tableData
-        :table-controller="state.oneTableController"
-        :total="state.total"
-        :border="false"
-        :loading="state.loading"
-         @handleSelectionChange="handleSelectionChange">
-         <template #opt="scope">
-          <el-popover  placement="left">
-            <template #reference>
-              <el-button type="primary" circle ><SvgIcon name="elementStar"/></el-button>
+    <el-row :gutter="20">
+      <el-col :span="4" :xs="24">
+        <el-card shadow="always">
+          <div class="head-container">
+            <el-input
+            v-model="state.organizationName"
+            placeholder="请输入组织名称"
+            clearable
+            prefix-icon="el-icon-search"
+            style="margin-bottom: 20px"
+            />
+          </div>
+          <div class="head-container">
+        	<mi-tree
+        	:treeData="state.organizationOptions"
+        	:defaultProps="state.defaultProps"
+        	nodeKey="organizationId"
+        	default-expand-all
+        	:expand-on-click-node="false"
+        	@CurNode="handleNodeClick"
+        	ref="tree"
+            >
+            </mi-tree>
+        </div>
+        </el-card>
+      </el-col>
+      <el-col :span="20" :xs="24">
+        <el-card shadow="always">
+        <!-- 查询 -->
+        <mi-search-form :columns="state.columns" labelWidth="68px" @search="handleQuery" @reset="resetQuery"></mi-search-form>
+        </el-card>
+        <el-card class="box-card">
+            <template #header>
+               <div class="card-header">
+                 <span class="card-header-text">{{.TableComment}}列表</span>
+                 <div>
+                   <el-button
+                      type="primary"
+                      plain
+                      v-auth="'{{.PackageName}}:{{.BusinessName}}:add'"
+                      @click="onOpenAddModule"
+                      ><SvgIcon name="elementPlus" />新增</el-button>
+                   <el-button
+                     type="danger"
+                     plain
+                     v-auth="'{{.PackageName}}:{{.BusinessName}}:delete'"
+                     :disabled="state.multiple"
+                     @click="onTabelRowDel"
+                     ><SvgIcon name="elementDelete" />删除</el-button>
+                 </div>
+               </div>
             </template>
-            <div>
-              <el-button text type="primary" v-auth="'{{.PackageName}}:{{.BusinessName}}:edit'" @click="onOpenEditModule(scope.row)">
-                <SvgIcon name="elementEdit" />修改
-              </el-button>
-            </div>
-            <div>
-              <el-button text type="primary" v-auth="'{{.PackageName}}:{{.BusinessName}}:delete'" @click="onTabelRowDel(scope.row)">
-                 <SvgIcon name="elementDelete" />删除
-              </el-button>
-            </div>
-          </el-popover>
-         </template>
-    </mi-table>
-    <!-- 分页设置-->
-    <div v-show="state.total > 0">
-        <el-divider></el-divider>
-        <mi-pagination :total="state.total" @pagerFresh="handleQuery"></mi-pagination>
-    </div>
-    </el-card>
-    <!-- 添加或修改岗位对话框 -->
-    <EditModule ref="editModuleRef" :title="state.title" />
+        <!--数据表格-->
+        <mi-table
+            :table-data=state.tableData
+            :table-controller="state.oneTableController"
+            :total="state.total"
+            :border="false"
+            :loading="state.loading"
+             @handleSelectionChange="handleSelectionChange">
+             <template #opt="scope">
+              <el-popover  placement="left">
+                <template #reference>
+                  <el-button type="primary" circle ><SvgIcon name="elementStar"/></el-button>
+                </template>
+                <div>
+                  <el-button text type="primary" v-auth="'{{.PackageName}}:{{.BusinessName}}:edit'" @click="onOpenEditModule(scope.row)">
+                    <SvgIcon name="elementEdit" />修改
+                  </el-button>
+                </div>
+                <div>
+                  <el-button text type="primary" v-auth="'{{.PackageName}}:{{.BusinessName}}:delete'" @click="onTabelRowDel(scope.row)">
+                     <SvgIcon name="elementDelete" />删除
+                  </el-button>
+                </div>
+              </el-popover>
+             </template>
+        </mi-table>
+        <!-- 分页设置-->
+        <div v-show="state.total > 0">
+            <el-divider></el-divider>
+            <mi-pagination :total="state.total" @pagerFresh="handleQuery"></mi-pagination>
+        </div>
+        </el-card>
+      </el-col>
+        <!-- 添加或修改岗位对话框 -->
+        <EditModule ref="editModuleRef" :title="state.title" />
+    </el-row>
   </div>
 </template>
 
@@ -69,6 +98,7 @@ import {
   onMounted,
   getCurrentInstance,
   onUnmounted,
+  watch
 } from "vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 import { list{{.FunctionName}}, del{{.FunctionName}} } from "@/api/{{.PackageName}}/{{.BusinessName}}";
@@ -89,6 +119,7 @@ const {{$column.JsonField}}Format = (row: any) => {
 };
 {{- end -}}
 {{- end }}
+const tree = ref(null);
 const state = reactive({
   // 遮罩层
   loading: true,
@@ -116,6 +147,14 @@ const state = reactive({
     {{$column.JsonField}}: undefined,
     {{- end }}
     {{- end }}
+  },
+  // 组织名称
+  organizationName: undefined,
+  // 组织树选项
+  organizationOptions: undefined,
+  defaultProps: {
+  	children: 'children',
+  	label: 'organizationName',
   },
   //查询columns
   columns:[
@@ -242,10 +281,29 @@ const handleSelectionChange = (selection: any) => {
   state.single = selection.length != 1;
   state.multiple = !selection.length;
 };
+// 节点单击事件
+const handleNodeClick = (data: any) => {
+	state.queryParams.organizationId = data.organizationId;
+	handleQuery();
+	state.queryParams.organizationId = 0;
+};
+/** 查询组织下拉树结构 */
+const getTreeselect = async () => {
+	//treeselect().then((response) => {
+		//state.organizationOptions = response.data;
+	//});
+};
+watch(
+	() => state.organizationName,
+	(newValue) => {
+		tree.value.treeRef.filter(newValue);
+	}
+);
 // 页面加载时
 onMounted(() => {
   // 查询岗位信息
   handleQuery();
+  getTreeselect();
   {{- range $index, $column := .Columns -}}
   {{- if ne $column.DictType "" }}
   proxy.getDicts("{{$column.DictType}}").then((response: any) => {

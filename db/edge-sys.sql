@@ -643,7 +643,7 @@ CREATE TABLE `sys_role_organizations` (
 
 LOCK TABLES `sys_role_organizations` WRITE;
 /*!40000 ALTER TABLE `sys_role_organizations` DISABLE KEYS */;
-INSERT INTO `sys_role_organizations` VALUES (1,2,9),(1,3,10),(1,7,11),(2,2,12),(2,3,13),(2,7,14);
+INSERT INTO `sys_role_organizations` VALUES (1,1,9),(2,2,12),(2,3,13),(2,7,14);
 /*!40000 ALTER TABLE `sys_role_organizations` ENABLE KEYS */;
 UNLOCK TABLES;
 

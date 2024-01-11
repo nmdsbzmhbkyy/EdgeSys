@@ -8,6 +8,7 @@ import (
 	"EdgeSys/pkg/global"
 	"bytes"
 	"fmt"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 	"os"
 	"strconv"
 	"strings"
@@ -217,7 +218,8 @@ func (s *toolsGenTableColumn) GenTableInit(tableName string) entity.DevGenTable 
 		}
 	}
 	data.PackageName = "system"
-	data.TplCategory = "crud"
+	data.TplCategory = "table"
+
 	// 中横线表名称，接口路径、前端文件夹名称和js名称使用
 	data.ModuleName = strings.Replace(tableName, "_", "-", -1)
 
@@ -370,7 +372,7 @@ func (s *toolsGenTableColumn) GenTableInit(tableName string) entity.DevGenTable 
 				column.IsList = "0"
 				column.IsQuery = "0"
 			}
-			global.Log.Info(y)
+			pkg.Log.Info(y)
 			data.Columns = append(data.Columns, column)
 		}(&wg, index)
 	}
@@ -380,6 +382,19 @@ func (s *toolsGenTableColumn) GenTableInit(tableName string) entity.DevGenTable 
 
 // 视图预览
 func Preview(tableId int64) map[string]any {
+	// todo guwh 根据分类取对应模板
+	// 根据tableId获取tpl_category
+	var tplCategory string
+	var err error
+	db := pkg.Db.Table("dev_gen_tables")
+	err = db.Debug().Model(entity.DevGenTable{}).Select("tpl_category").Where("table_id = ?", tableId).Find(&tplCategory).Error
+	if err != nil {
+		biz.ErrIsNil(err, "查询dev_gen_tables失败:")
+	}
+	if len(tplCategory) == 0 {
+		biz.ErrIsNil(err, "模板分类未定义")
+	}
+
 	t1, err := template.ParseFiles("resource/template/go/entity.template")
 	biz.ErrIsNil(err, "entity模版读取失败")
 
@@ -395,10 +410,11 @@ func Preview(tableId int64) map[string]any {
 	t5, err := template.ParseFiles("resource/template/js/api.template")
 	biz.ErrIsNil(err, "js模版读取失败")
 
-	t6, err := template.ParseFiles("resource/template/vue/list-vue.template")
+	// 根据tpl_category使用对应模板
+	t6, err := template.ParseFiles("resource/template/vue/" + tplCategory + "/list-vue.template")
 	biz.ErrIsNil(err, "vue列表模版读取失败！")
 
-	t7, err := template.ParseFiles("resource/template/vue/edit-vue.template")
+	t7, err := template.ParseFiles("resource/template/vue/" + tplCategory + "/edit-vue.template")
 	biz.ErrIsNil(err, "vue编辑模版读取失败！")
 
 	tab := services.DevGenTableModelDao.FindOne(entity.DevGenTable{TableId: tableId}, false)
@@ -431,9 +447,15 @@ func Preview(tableId int64) map[string]any {
 
 // 生成 代码
 func GenCode(tableId int64) {
+	var err error
 
 	tab := services.DevGenTableModelDao.FindOne(entity.DevGenTable{TableId: tableId}, false)
 	tab.ModuleName = strings.Replace(tab.TableName, "_", "-", -1)
+	// 模板分类
+	tplCategory := tab.TplCategory
+	if len(tplCategory) == 0 {
+		biz.ErrIsNil(err, "模板分类未定义")
+	}
 
 	t1, err := template.ParseFiles("resource/template/go/entity.template")
 	biz.ErrIsNil(err, "entity模版读取失败！")
@@ -450,9 +472,10 @@ func GenCode(tableId int64) {
 	t5, err := template.ParseFiles("resource/template/js/api.template")
 	biz.ErrIsNil(err, "js模版读取失败！")
 
-	t6, err := template.ParseFiles("resource/template/vue/list-vue.template")
+	t6, err := template.ParseFiles("resource/template/vue/" + tplCategory + "/list-vue.template")
 	biz.ErrIsNil(err, "vue列表模版读取失败！")
-	t7, err := template.ParseFiles("resource/template/vue/edit-vue.template")
+
+	t7, err := template.ParseFiles("resource/template/vue/" + tplCategory + "/edit-vue.template")
 	biz.ErrIsNil(err, "vue编辑模版读取失败！")
 
 	kgo.KFile.Mkdir("./apps/"+tab.PackageName+"/api/", os.ModePerm)

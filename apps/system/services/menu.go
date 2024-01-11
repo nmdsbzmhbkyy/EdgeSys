@@ -2,9 +2,8 @@ package services
 
 import (
 	"EdgeSys/apps/system/entity"
-	"EdgeSys/pkg/global"
-
 	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 type (
@@ -18,6 +17,7 @@ type (
 		SelectMenu(data entity.SysMenu) *[]entity.SysMenu
 		SelectMenuLabel(data entity.SysMenu) *[]entity.MenuLabel
 		SelectMenuRole(roleName string) *[]entity.SysMenu
+		SelectMenuRoleAndGroup(roleName string, menuGroup string) *[]entity.SysMenu
 		GetMenuRole(data entity.MenuRole) *[]entity.MenuRole
 	}
 
@@ -31,14 +31,14 @@ var SysMenuModelDao SysMenuModel = &sysMenuModelImpl{
 }
 
 func (m *sysMenuModelImpl) Insert(data entity.SysMenu) *entity.SysMenu {
-	err := global.Db.Table(m.table).Create(&data).Error
+	err := pkg.Db.Table(m.table).Create(&data).Error
 	biz.ErrIsNil(err, "添加菜单失败")
 	return &data
 }
 
 func (m *sysMenuModelImpl) FindOne(menuId int64) *entity.SysMenu {
 	resData := new(entity.SysMenu)
-	err := global.Db.Table(m.table).Where("menu_id = ?", menuId).First(resData).Error
+	err := pkg.Db.Table(m.table).Where("menu_id = ?", menuId).First(resData).Error
 	biz.ErrIsNil(err, "查询菜单失败")
 	return resData
 }
@@ -48,7 +48,7 @@ func (m *sysMenuModelImpl) FindListPage(page, pageSize int, data entity.SysMenu)
 	var total int64 = 0
 
 	offset := pageSize * (page - 1)
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	// 此处填写 where参数判断
 	if data.MenuName != "" {
 		db = db.Where("menu_name like ?", "%"+data.MenuName+"%")
@@ -78,7 +78,7 @@ func (m *sysMenuModelImpl) FindListPage(page, pageSize int, data entity.SysMenu)
 func (m *sysMenuModelImpl) FindList(data entity.SysMenu) *[]entity.SysMenu {
 	list := make([]entity.SysMenu, 0)
 
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	// 此处填写 where参数判断
 	if data.MenuName != "" {
 		db = db.Where("menu_name like ?", "%"+data.MenuName+"%")
@@ -105,13 +105,13 @@ func (m *sysMenuModelImpl) FindList(data entity.SysMenu) *[]entity.SysMenu {
 }
 
 func (m *sysMenuModelImpl) Update(data entity.SysMenu) *entity.SysMenu {
-	err := global.Db.Table(m.table).Select("*").Updates(data).Error
+	err := pkg.Db.Table(m.table).Select("*").Updates(data).Error
 	biz.ErrIsNil(err, "修改菜单失败")
 	return &data
 }
 
 func (m *sysMenuModelImpl) Delete(menuIds []int64) {
-	err := global.Db.Table(m.table).Delete(&entity.SysMenu{}, "menu_id in (?)", menuIds).Error
+	err := pkg.Db.Table(m.table).Delete(&entity.SysMenu{}, "menu_id in (?)", menuIds).Error
 	biz.ErrIsNil(err, "修改菜单失败")
 	return
 }
@@ -151,10 +151,13 @@ func (m *sysMenuModelImpl) SelectMenuLabel(data entity.SysMenu) *[]entity.MenuLa
 	return &redData
 }
 
-func (m *sysMenuModelImpl) GetMenuByRoleKey(roleKey string) *[]entity.SysMenu {
+func (m *sysMenuModelImpl) GetMenuByRoleKeyAndGroup(roleKey string, menuGroup string) *[]entity.SysMenu {
 	menus := make([]entity.SysMenu, 0)
-	db := global.Db.Table(m.table).Select("sys_menus.*").Joins("left join sys_role_menus on sys_role_menus.menu_id=sys_menus.menu_id")
+	db := pkg.Db.Table(m.table).Select("sys_menus.*").Joins("left join sys_role_menus on sys_role_menus.menu_id=sys_menus.menu_id")
 	db = db.Where("sys_role_menus.role_name=? and menu_type in ('M','C')", roleKey)
+	if len(menuGroup) > 0 {
+		db.Where("sys_menus.menu_group = ?", menuGroup)
+	}
 	db.Where("sys_menus.delete_time IS NULL")
 	err := db.Order("sort").Find(&menus).Error
 	biz.ErrIsNil(err, "通过角色名查询菜单失败")
@@ -164,7 +167,7 @@ func (m *sysMenuModelImpl) GetMenuByRoleKey(roleKey string) *[]entity.SysMenu {
 func (m *sysMenuModelImpl) SelectMenuRole(roleKey string) *[]entity.SysMenu {
 	redData := make([]entity.SysMenu, 0)
 
-	menulist := m.GetMenuByRoleKey(roleKey)
+	menulist := m.GetMenuByRoleKeyAndGroup(roleKey, "")
 	menuList := *menulist
 	redData = make([]entity.SysMenu, 0)
 	for i := 0; i < len(menuList); i++ {
@@ -177,10 +180,28 @@ func (m *sysMenuModelImpl) SelectMenuRole(roleKey string) *[]entity.SysMenu {
 	}
 	return &redData
 }
+
+func (m *sysMenuModelImpl) SelectMenuRoleAndGroup(roleKey string, menuGroup string) *[]entity.SysMenu {
+	redData := make([]entity.SysMenu, 0)
+
+	menulist := m.GetMenuByRoleKeyAndGroup(roleKey, menuGroup)
+	menuList := *menulist
+	redData = make([]entity.SysMenu, 0)
+	for i := 0; i < len(menuList); i++ {
+		if menuList[i].ParentId != 0 {
+			continue
+		}
+		menusInfo := DiguiMenu(&menuList, menuList[i])
+
+		redData = append(redData, menusInfo)
+	}
+	return &redData
+}
+
 func (m *sysMenuModelImpl) GetMenuRole(data entity.MenuRole) *[]entity.MenuRole {
 	menus := make([]entity.MenuRole, 0)
 
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	if data.MenuName != "" {
 		db = db.Where("menu_name = ?", data.MenuName)
 	}

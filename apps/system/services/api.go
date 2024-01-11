@@ -4,10 +4,10 @@ import (
 	"EdgeSys/apps/system/entity"
 	"EdgeSys/pkg/global"
 	"errors"
-
 	"gorm.io/gorm"
 	"mod.miligc.com/edge-common/CommonKit/biz"
 	"mod.miligc.com/edge-common/CommonKit/casbin"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 type (
@@ -30,16 +30,16 @@ var SysApiModelDao SysApiModel = &sysApiModelImpl{
 }
 
 func (m *sysApiModelImpl) Insert(api entity.SysApi) *entity.SysApi {
-	err := global.Db.Table(m.table).Where("path = ? AND method = ?", api.Path, api.Method).First(&entity.SysApi{}).Error
+	err := pkg.Db.Table(m.table).Where("path = ? AND method = ?", api.Path, api.Method).First(&entity.SysApi{}).Error
 	biz.IsTrue(errors.Is(err, gorm.ErrRecordNotFound), "存在相同api")
-	err = global.Db.Table(m.table).Create(&api).Error
+	err = pkg.Db.Table(m.table).Create(&api).Error
 	biz.ErrIsNil(err, "新增Api失败")
 	return &api
 }
 
 func (m *sysApiModelImpl) FindOne(id int64) (resData *entity.SysApi) {
 	resData = new(entity.SysApi)
-	err := global.Db.Table(m.table).Where("id = ?", id).First(&resData).Error
+	err := pkg.Db.Table(m.table).Where("id = ?", id).First(&resData).Error
 	biz.ErrIsNil(err, "查询Api失败")
 	return
 }
@@ -49,7 +49,7 @@ func (m *sysApiModelImpl) FindListPage(page, pageSize int, data entity.SysApi) (
 	var total int64 = 0
 	offset := pageSize * (page - 1)
 
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 
 	if data.Path != "" {
 		db = db.Where("path LIKE ?", "%"+data.Path+"%")
@@ -76,7 +76,7 @@ func (m *sysApiModelImpl) FindListPage(page, pageSize int, data entity.SysApi) (
 
 func (m *sysApiModelImpl) FindList(data entity.SysApi) *[]entity.SysApi {
 	list := make([]entity.SysApi, 0)
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 
 	if data.Path != "" {
 		db = db.Where("path LIKE ?", "%"+data.Path+"%")
@@ -101,21 +101,21 @@ func (m *sysApiModelImpl) FindList(data entity.SysApi) *[]entity.SysApi {
 
 func (m *sysApiModelImpl) Update(api entity.SysApi) *entity.SysApi {
 	var oldA entity.SysApi
-	err := global.Db.Table(m.table).Where("id = ?", api.Id).First(&oldA).Error
+	err := pkg.Db.Table(m.table).Where("id = ?", api.Id).First(&oldA).Error
 	biz.ErrIsNil(err, "【修改api】查询api失败")
 	if oldA.Path != api.Path || oldA.Method != api.Method {
-		err := global.Db.Table(m.table).Where("path = ? AND method = ?", api.Path, api.Method).First(&entity.SysApi{}).Error
+		err := pkg.Db.Table(m.table).Where("path = ? AND method = ?", api.Path, api.Method).First(&entity.SysApi{}).Error
 		biz.IsTrue(errors.Is(err, gorm.ErrRecordNotFound), "存在相同api路径")
 	}
 	// 异常直接抛错误
 	ca := casbin.CasbinS{ModelPath: global.Conf.Casbin.ModelPath}
 	ca.UpdateCasbinApi(oldA.Path, api.Path, oldA.Method, api.Method)
-	err = global.Db.Table(m.table).Model(&api).Updates(&api).Error
+	err = pkg.Db.Table(m.table).Model(&api).Updates(&api).Error
 	biz.ErrIsNil(err, "修改api信息失败")
 	return &api
 }
 
 func (m *sysApiModelImpl) Delete(ids []int64) {
-	err := global.Db.Table(m.table).Delete(&entity.SysApi{}, "id in (?)", ids).Error
+	err := pkg.Db.Table(m.table).Delete(&entity.SysApi{}, "id in (?)", ids).Error
 	biz.ErrIsNil(err, "删除配置信息失败")
 }

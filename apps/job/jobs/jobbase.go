@@ -5,9 +5,9 @@ import (
 	logEntity "EdgeSys/apps/job/entity"
 	"EdgeSys/apps/job/services"
 	logServices "EdgeSys/apps/job/services"
-	"EdgeSys/pkg/global"
 	"EdgeSys/pkg/global/model"
 	"fmt"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 	"sync"
 	"time"
 
@@ -78,11 +78,11 @@ func Setup() {
 	Crontab = NewWithSeconds()
 	err := services.JobModelDao.RemoveAllEntryID()
 	if err != nil {
-		global.Log.Info(time.Now().Format(timeFormat), " [ERROR] JobCore remove entry_id error", err)
+		pkg.Log.Info(time.Now().Format(timeFormat), " [ERROR] JobCore remove entry_id error", err)
 	}
 	// 其中任务
 	Crontab.Start()
-	global.Log.Info(time.Now().Format(timeFormat), " [INFO] JobCore start success.")
+	pkg.Log.Info(time.Now().Format(timeFormat), " [INFO] JobCore start success.")
 	// 关闭任务
 	defer Crontab.Stop()
 	select {}

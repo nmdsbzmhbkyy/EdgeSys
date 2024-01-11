@@ -5,11 +5,11 @@ import (
 	services "EdgeSys/apps/system/services"
 	"EdgeSys/pkg/global"
 	"fmt"
-
 	"mod.miligc.com/edge-common/CommonKit/biz"
 	"mod.miligc.com/edge-common/CommonKit/model"
 	"mod.miligc.com/edge-common/CommonKit/restfulx"
 	"mod.miligc.com/edge-common/CommonKit/utils"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 type DictApi struct {
@@ -65,7 +65,7 @@ func (p *DictApi) DeleteDictType(rc *restfulx.ReqCtx) {
 		if len(*list) == 0 {
 			deList = append(deList, id)
 		} else {
-			global.Log.Info(fmt.Sprintf("dictId: %d 存在字典数据绑定无法删除", id))
+			pkg.Log.Info(fmt.Sprintf("dictId: %d 存在字典数据绑定无法删除", id))
 		}
 	}
 	p.DictType.Delete(deList)

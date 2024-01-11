@@ -1,7 +1,10 @@
 app:
   name: EdgeSys
   version: 1.0.0
-  
+
+module:
+  - PersonComponent-v1.0.0
+
 server:
   # debug release test
   model: debug
@@ -25,6 +28,8 @@ server:
     enable: false
     key-file: ./resource/default.key
     cert-file: ./resource/default.pem
+    # debug module
+  load-method: module
 jwt:
   key: EdgeSys
   # 过期时间单位秒 7天
@@ -35,15 +40,16 @@ queue:
   num: 3000
 
 redis:
-  host: 127.0.0.1
+  host: 10.110.18.196
 #  password: root
   port: 6379
 
 mysql:
   host: 127.0.0.1:3306
   username: root
-  password: 123456
+  password: 12345678
   db-name: edge_sys
+  milidb-name: aurine3
   config: charset=utf8&loc=Local&parseTime=true
 
 postgresql:
@@ -67,7 +73,7 @@ gen:
 log:
   # 日志等级, trace, debug, info, warn, error, fatal
   level: debug
-  db-log: info
+  db-log: Info
 #  file:
 #    path: ./
 #    name: edge_sys_log.log

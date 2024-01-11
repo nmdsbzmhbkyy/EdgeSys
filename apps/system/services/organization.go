@@ -2,11 +2,10 @@ package services
 
 import (
 	"EdgeSys/apps/system/entity"
-	"EdgeSys/pkg/global"
 	"errors"
-
 	"github.com/kakuilan/kgo"
 	"mod.miligc.com/edge-common/CommonKit/biz"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 type (
@@ -32,7 +31,7 @@ var SysOrganizationModelDao SysOrganizationModel = &sysOrganizationModelImpl{
 }
 
 func (m *sysOrganizationModelImpl) Insert(data entity.SysOrganization) *entity.SysOrganization {
-	biz.ErrIsNil(global.Db.Table(m.table).Create(&data).Error, "新增组织信息失败")
+	biz.ErrIsNil(pkg.Db.Table(m.table).Create(&data).Error, "新增组织信息失败")
 	organizationPath := "/" + kgo.KConv.Int2Str(data.OrganizationId)
 	if int(data.ParentId) != 0 {
 		organizationP := m.FindOne(data.ParentId)
@@ -41,13 +40,13 @@ func (m *sysOrganizationModelImpl) Insert(data entity.SysOrganization) *entity.S
 		organizationPath = "/0" + organizationPath
 	}
 	data.OrganizationPath = organizationPath
-	biz.ErrIsNil(global.Db.Table(m.table).Model(&data).Updates(&data).Error, "修改组织信息失败")
+	biz.ErrIsNil(pkg.Db.Table(m.table).Model(&data).Updates(&data).Error, "修改组织信息失败")
 	return &data
 }
 
 func (m *sysOrganizationModelImpl) FindOne(organizationId int64) *entity.SysOrganization {
 	resData := new(entity.SysOrganization)
-	err := global.Db.Table(m.table).Where("organization_id = ?", organizationId).First(resData).Error
+	err := pkg.Db.Table(m.table).Where("organization_id = ?", organizationId).First(resData).Error
 	biz.ErrIsNil(err, "查询组织信息失败")
 	return resData
 }
@@ -57,7 +56,7 @@ func (m *sysOrganizationModelImpl) FindListPage(page, pageSize int, data entity.
 	var total int64 = 0
 	offset := pageSize * (page - 1)
 
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	// 此处填写 where参数判断
 	if data.OrganizationId != 0 {
 		db = db.Where("organization_id = ?", data.OrganizationId)
@@ -81,7 +80,7 @@ func (m *sysOrganizationModelImpl) FindListPage(page, pageSize int, data entity.
 func (m *sysOrganizationModelImpl) FindList(data entity.SysOrganization) *[]entity.SysOrganization {
 	list := make([]entity.SysOrganization, 0)
 
-	db := global.Db.Table(m.table)
+	db := pkg.Db.Table(m.table)
 	// 此处填写 where参数判断
 	if data.OrganizationId != 0 {
 		db = db.Where("organization_id = ?", data.OrganizationId)
@@ -113,12 +112,12 @@ func (m *sysOrganizationModelImpl) Update(data entity.SysOrganization) *entity.S
 	if data.OrganizationPath != "" && data.OrganizationPath != one.OrganizationPath {
 		biz.ErrIsNil(errors.New("上级组织不允许修改！"), "上级组织不允许修改")
 	}
-	biz.ErrIsNil(global.Db.Table(m.table).Model(&data).Updates(&data).Error, "修改组织信息失败")
+	biz.ErrIsNil(pkg.Db.Table(m.table).Model(&data).Updates(&data).Error, "修改组织信息失败")
 	return &data
 }
 
 func (m *sysOrganizationModelImpl) Delete(organizationIds []int64) {
-	err := global.Db.Table(m.table).Delete(&entity.SysOrganization{}, "organization_id in (?)", organizationIds).Error
+	err := pkg.Db.Table(m.table).Delete(&entity.SysOrganization{}, "organization_id in (?)", organizationIds).Error
 	biz.ErrIsNil(err, "删除组织信息失败")
 	return
 }

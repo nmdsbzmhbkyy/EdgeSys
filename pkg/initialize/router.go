@@ -1,15 +1,15 @@
 package initialize
 
 import (
-	"EdgeSys/apps/job/jobs"
-	"EdgeSys/pkg/global"
-	"EdgeSys/pkg/transport"
-
 	devRouter "EdgeSys/apps/develop/router"
+	"EdgeSys/apps/job/jobs"
 	jobRouter "EdgeSys/apps/job/router"
 	logRouter "EdgeSys/apps/log/router"
 	sysRouter "EdgeSys/apps/system/router"
+	"EdgeSys/pkg/global"
 	"EdgeSys/pkg/middleware"
+	"EdgeSys/pkg/transport"
+	businessRouter "mod.miligc.com/edge-common/business-common/business/router"
 )
 
 func InitRouter() *transport.HttpServer {
@@ -57,6 +57,9 @@ func InitRouter() *transport.HttpServer {
 	{
 		jobRouter.InitJobRouter(container)
 		jobRouter.InitJobLogRouter(container)
+	}
+	{
+		businessRouter.InitEventRouter(container)
 	}
 	// api接口
 	middleware.SwaggerConfig(container)

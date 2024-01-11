@@ -1,0 +1,196 @@
+<template>
+  <div class="system-{{.BusinessName}}-container">
+    <mi-dialog v-model="state.isShowDialog" width="769px" center @confirm="closeDialog" @close="closeDialog" :title="title">
+      <template #content>
+        <mi-form v-model="state.ref" :form="state.form" :columns="state.columns" :formValue="state.ruleForm"></mi-form>
+      </template>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="onCancel">取 消</el-button>
+          <el-button type="primary" @click="onSubmit" :loading="state.loading">编 辑</el-button>
+        </span>
+      </template>
+    </mi-dialog>
+  </div>
+</template>
+
+<script lang="ts" setup name="edit{{.FunctionName}}">
+import { reactive, ref, getCurrentInstance,nextTick } from "vue";
+import { update{{.FunctionName}}, add{{.FunctionName}} } from "@/api/{{.PackageName}}/{{.BusinessName}}";
+import { ElMessage } from "element-plus";
+
+const props = defineProps({
+  title: {
+    type: String,
+    default: () => "",
+  },
+})
+
+const { proxy } = getCurrentInstance() as any;
+const ruleFormRef = ref<HTMLElement | null>(null);
+{{- range $index, $column := .Columns -}}
+{{- if ne $column.DictType "" }}
+// {{$column.JsonField}}Options字典数据
+const {{$column.JsonField}}Options =  ref([]);
+{{- end -}}
+{{- end }}
+const state = reactive({
+  // 是否显示弹出层
+  isShowDialog: false,
+  loading: false,
+  ruleForm: {
+  {{- range $index, $column := .Columns -}}
+  {{- if or (eq $column.IsInsert "1") (eq $column.IsPk "1") }}
+  {{- if or (eq $column.GoType "int") (eq $column.GoType "int64")}}
+  {{$column.JsonField}}: 0,
+  {{- else if eq $column.GoType "string"}}
+  {{$column.JsonField}}: "",
+  {{- else }}
+  {{$column.JsonField}}: undefined,
+  {{- end}}
+  {{- end}}
+  {{- end}}
+  },
+  ref: ref<HTMLElement | null>(null),
+  form:{
+    inline: false,
+    labelWidth:'80px',
+    rules:{
+    {{- range $index, $column := .Columns -}}
+    {{- if eq $column.IsRequired "1" }}
+        {{$column.JsonField}}: [
+          { required: true, message: "{{$column.ColumnComment}}不能为空", trigger: "blur" }
+        ],
+    {{- end}}
+    {{- end}}
+    }
+  },
+  columns:[
+  {{- range $index, $column := .Columns -}}
+  {{- if and (eq $column.IsInsert "1") (ne $column.IsPk "1")  (ne $column.JsonField "createTime") (ne $column.JsonField "updateTime") (ne $column.JsonField "deleteTime") -}}
+  {{- if eq $column.HtmlType "input" }}
+    {
+      label: '{{$column.ColumnComment}}',
+      name: '{{$column.JsonField}}',
+      placeholder: '请输入{{$column.ColumnComment}}',
+    },
+  {{- else if eq $column.HtmlType "switch" }}
+    {
+      label: '{{$column.ColumnComment}}',
+      name: '{{$column.JsonField}}',
+      el:'switch',
+    },
+  {{- else if eq $column.HtmlType "select" }}
+  {{if ne $column.DictType ""}}
+    {
+      label: '{{$column.ColumnComment}}',
+      name: '{{$column.JsonField}}',
+      el:'select',
+      columnEnum: {{$column.JsonField}}Options,
+      enum: {
+         label: 'dictLabel',
+         value: 'dictValue',
+      },
+    },
+  {{ end }}
+  {{- else if eq $column.HtmlType "radio" }}
+  {{if ne $column.DictType ""}}
+    {
+      label: '{{$column.ColumnComment}}',
+      name: '{{$column.JsonField}}',
+      el:'radio',
+      columnEnum: {{$column.JsonField}}Options,
+      enum: {
+         label: 'dictLabel',
+         value: 'dictValue',
+      },
+    },
+  {{- end }}
+  {{- else if eq $column.HtmlType "datetime" }}
+    {
+      label: '{{$column.ColumnComment}}',
+      name: '{{$column.JsonField}}',
+      el:'datetime',
+      attrs:{
+        type:'datetime'
+      }
+    },
+  {{- else if eq $column.HtmlType "textarea" -}}
+    {
+      label: '{{$column.ColumnComment}}',
+      name: '{{$column.JsonField}}',
+      span:24,
+      attrs:{
+        type: 'textarea',
+      }
+    },
+  {{- else if eq $column.HtmlType "checkbox" }}
+    {
+      label: '{{$column.ColumnComment}}',
+      name: '{{$column.JsonField}}',
+      columnEnum: {{$column.JsonField}}Options,
+      enum: {
+        label: 'dictLabel',
+        value: 'dictValue',
+      },
+    }
+  {{- end -}}
+  {{- end -}}
+  {{- end }}
+  ]
+});
+// 打开弹窗
+const openDialog = (row: any) => {
+  state.isShowDialog = true;
+  state.loading = false;
+  nextTick(()=>{
+    state.ruleForm = JSON.parse(JSON.stringify(row));
+  })
+ {{- range $index, $column := .Columns -}}
+ {{- if ne $column.DictType "" }}
+ proxy.getDicts("{{$column.DictType}}").then((response: any) => {
+     {{$column.JsonField}}Options.value = response.data;
+ });
+ {{- end -}}
+ {{- end}}
+}
+
+// 关闭弹窗
+const closeDialog = (row?: object) => {
+  proxy.mittBus.emit("onEdit{{.FunctionName}}Module", row);
+  state.isShowDialog = false;
+};
+// 取消
+const onCancel = () => {
+  closeDialog();
+};
+// 保存
+const onSubmit = () => {
+  state.ref.validate((valid: boolean) => {
+    if (valid) {
+      state.loading = true;
+      if (state.ruleForm.{{.PkJsonField}} != undefined && state.ruleForm.{{.PkJsonField}} != 0) {
+        update{{.FunctionName}}(state.ruleForm).then((response: any) => {
+          if (response.code === 200) {
+            ElMessage.success("修改成功");
+          }
+          state.loading = false;
+          closeDialog(state.ruleForm); // 关闭弹窗
+        });
+      } else {
+        add{{.FunctionName}}(state.ruleForm).then((response: any) => {
+          if (response.code === 200) {
+            ElMessage.success("新增成功");
+          }
+          state.loading = false;
+          closeDialog(state.ruleForm); // 关闭弹窗
+        });
+      }
+    }
+  });
+};
+
+defineExpose({
+  openDialog,
+});
+</script>

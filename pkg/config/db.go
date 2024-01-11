@@ -6,6 +6,7 @@ type Mysql struct {
 	Host         string `mapstructure:"host" json:"host" yaml:"host"`
 	Config       string `mapstructure:"config" json:"config" yaml:"config"`
 	Dbname       string `mapstructure:"db-name" json:"dbname" yaml:"db-name"`
+	MiliDbname   string `mapstructure:"milidb-name" json:"milidbname" yaml:"milidb-name"`
 	Username     string `mapstructure:"username" json:"username" yaml:"username"`
 	Password     string `mapstructure:"password" json:"password" yaml:"password"`
 	MaxIdleConns int    `mapstructure:"max-idle-conns" json:"maxIdleConns" yaml:"max-idle-conns"`
@@ -16,6 +17,10 @@ type Mysql struct {
 
 func (m *Mysql) Dsn() string {
 	return m.Username + ":" + m.Password + "@tcp(" + m.Host + ")/" + m.Dbname + "?" + m.Config
+}
+
+func (m *Mysql) Msn() string {
+	return m.Username + ":" + m.Password + "@tcp(" + m.Host + ")/" + m.MiliDbname + "?" + m.Config
 }
 
 type Postgresql struct {

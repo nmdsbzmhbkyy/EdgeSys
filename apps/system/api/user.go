@@ -4,13 +4,13 @@ import (
 	"EdgeSys/apps/system/api/form"
 	"EdgeSys/apps/system/api/vo"
 	"EdgeSys/apps/system/entity"
-
 	"github.com/dgrijalva/jwt-go"
 	"github.com/emicklei/go-restful/v3"
 	"github.com/kakuilan/kgo"
 	"github.com/mssola/user_agent"
 	"mod.miligc.com/edge-common/CommonKit/model"
 	"mod.miligc.com/edge-common/CommonKit/token"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
 
 	logEntity "EdgeSys/apps/log/entity"
 	logServices "EdgeSys/apps/log/services"
@@ -105,6 +105,7 @@ func (u *UserApi) Login(rc *restfulx.ReqCtx) {
 // Auth 用户权限信息
 func (u *UserApi) Auth(rc *restfulx.ReqCtx) {
 	userName := restfulx.QueryParam(rc, "username")
+	menuGroup := restfulx.QueryParam(rc, "menuGroup")
 	biz.NotEmpty(userName, "用户名必传")
 	var user entity.SysUser
 	user.Username = userName
@@ -112,7 +113,7 @@ func (u *UserApi) Auth(rc *restfulx.ReqCtx) {
 	role := u.RoleApp.FindOne(userData.RoleId)
 	//前端权限
 	permis := u.RoleMenuApp.GetPermis(role.RoleId)
-	menus := u.MenuApp.SelectMenuRole(role.RoleKey)
+	menus := u.MenuApp.SelectMenuRoleAndGroup(role.RoleKey, menuGroup)
 
 	rc.ResData = vo.AuthVo{
 		User:        *userData,
@@ -202,7 +203,7 @@ func (u *UserApi) InsetSysUserAvatar(rc *restfulx.ReqCtx) {
 	guid, _ := kgo.KStr.UuidV4()
 	filPath := "static/uploadfile/" + guid + ".jpg"
 	for _, file := range files {
-		global.Log.Info(file.Filename)
+		pkg.Log.Info(file.Filename)
 		// 上传文件至指定目录
 		biz.ErrIsNil(filek.SaveUploadedFile(file, filPath), "保存头像失败")
 	}

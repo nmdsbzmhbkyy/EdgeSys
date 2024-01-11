@@ -6,11 +6,13 @@ import (
 	"EdgeSys/pkg/global"
 	"errors"
 	"fmt"
-
+	"github.com/xuri/excelize/v2"
 	"mod.miligc.com/edge-common/CommonKit/biz"
 	"mod.miligc.com/edge-common/CommonKit/model"
 	"mod.miligc.com/edge-common/CommonKit/restfulx"
 	"mod.miligc.com/edge-common/CommonKit/utils"
+	"mod.miligc.com/edge-common/business-common/business/pkg"
+	"strconv"
 )
 
 type PostApi struct {
@@ -75,7 +77,7 @@ func (p *PostApi) DeletePost(rc *restfulx.ReqCtx) {
 		if len(*list) == 0 {
 			deList = append(deList, id)
 		} else {
-			global.Log.Info(fmt.Sprintf("dictId: %d 存在岗位绑定用户无法删除", id))
+			pkg.Log.Info(fmt.Sprintf("dictId: %d 存在岗位绑定用户无法删除", id))
 		}
 	}
 	if len(deList) == 0 {
@@ -97,4 +99,40 @@ func (p *PostApi) ExportPost(rc *restfulx.ReqCtx) {
 	filename = utils.GetFileName(global.Conf.Server.ExcelDir, filename)
 	utils.InterfaceToExcel(*list, filename)
 	rc.Download(filename)
+}
+
+// ImportPost 导入岗位
+func (p *PostApi) ImportPost(rc *restfulx.ReqCtx) {
+	// 从请求中读取Excel文件
+	file, _, err := rc.Request.Request.FormFile("file")
+	if err != nil {
+		biz.ErrIsNil(errors.New("导入出现异常"), "导入出现异常")
+	}
+
+	// 解析Excel文件
+	xlFile, err := excelize.OpenReader(file)
+	if err != nil {
+		biz.ErrIsNil(errors.New("解析Excel文件出现异常"), "解析Excel文件出现异常")
+	}
+	// 遍历Excel文件中的所有行
+	rows, _ := xlFile.GetRows("Sheet1")
+	for rowIndex, row := range rows {
+		// 跳过标题行
+		if rowIndex == 0 {
+			continue
+		}
+
+		sort, _ := strconv.ParseInt(row[2], 10, 64)
+		// 创建岗位对象
+		post := entity.SysPost{
+			PostName: row[0],
+			PostCode: row[1],
+			Sort:     sort,
+			Status:   row[3],
+			Remark:   row[4],
+		}
+		// 保存岗位对象到数据库中
+		pkg.Log.Infoln(post)
+		p.PostApp.Insert(post)
+	}
 }

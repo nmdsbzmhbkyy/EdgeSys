@@ -57,6 +57,11 @@ var rootCmd = &cobra.Command{
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
+		defer func() {
+			if err := recover(); err != nil {
+				global.Log.Error("recover 异常捕获:", err)
+			}
+		}()
 		// 前置 函数
 		restfulx.UseBeforeHandlerInterceptor(middleware.PermissionHandler)
 		// 后置 函数

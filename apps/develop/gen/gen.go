@@ -365,6 +365,7 @@ func (s *toolsGenTableColumn) GenTableInit(tableName string) entity.DevGenTable 
 				data.PkGoField = column.GoField
 				data.PkGoType = column.GoType
 				data.PkJsonField = column.JsonField
+				data.MenuGroup = column.MenuGroup
 				if dbColumn[y].Extra == "auto_increment" {
 					column.IsIncrement = "1"
 				}

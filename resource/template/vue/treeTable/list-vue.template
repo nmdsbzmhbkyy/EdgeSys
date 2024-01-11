@@ -227,7 +227,7 @@ const state = reactive({
 });
 
 /** 查询列表 */
-const handleQuery = (val) => {
+const handleQuery = (val?:any) => {
   state.loading = true;
   Object.assign(state.queryParams,val)
   list{{.FunctionName}}(state.queryParams).then((response:any) => {

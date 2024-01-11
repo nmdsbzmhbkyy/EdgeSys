@@ -67,6 +67,21 @@ func Init{{.ClassName}}Router(container *restful.Container) {
     	Metadata(restfulspec.KeyOpenAPITags, tags).
     	Param(ws.PathParameter("{{.PkJsonField}}", "多id 1,2,3").DataType("string")))
 
+
+    ws.Route(ws.GET("/export").To(func(request *restful.Request, response *restful.Response) {
+    	restfulx.NewReqCtx(request, response).WithLog("导出{{.FunctionName}}信息").Handle(s.Export{{.ClassName}})
+    }).
+    	Doc("导出{{.FunctionName}}信息").
+    	Param(ws.QueryParameter("filename", "filename").DataType("string")).
+    	Metadata(restfulspec.KeyOpenAPITags, tags))
+
+    ws.Route(ws.POST("/import").To(func(request *restful.Request, response *restful.Response) {
+        restfulx.NewReqCtx(request, response).WithLog("导入{{.FunctionName}}信息").Handle(s.Import{{.ClassName}})
+        }).
+        Doc("导入{{.FunctionName}}信息").
+        Metadata(restfulspec.KeyOpenAPITags, tags).
+        Reads(entity.{{.ClassName}}{}))
+
     container.Add(ws)
 }
 

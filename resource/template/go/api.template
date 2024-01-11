@@ -5,12 +5,16 @@ package api
 // 生成人：{{.FunctionAuthor}}
 // ==========================================================================
 import (
+    "EdgeSys/apps/{{.PackageName}}/entity"
+    "EdgeSys/apps/{{.PackageName}}/services"
+    "EdgeSys/pkg/global"
+    "github.com/xuri/excelize/v2"
+    "errors"
+    "mod.miligc.com/edge-common/CommonKit/biz"
     "mod.miligc.com/edge-common/CommonKit/model"
     "mod.miligc.com/edge-common/CommonKit/restfulx"
-
-	"EdgeSys/apps/{{.PackageName}}/entity"
-	"EdgeSys/apps/{{.PackageName}}/services"
-	"mod.miligc.com/edge-common/CommonKit/utils"
+    "mod.miligc.com/edge-common/CommonKit/utils"
+    "mod.miligc.com/edge-common/business-common/business/pkg"
 )
 
 type {{.ClassName}}Api struct {
@@ -92,4 +96,83 @@ func (p *{{.ClassName}}Api) Delete{{.ClassName}}(rc *restfulx.ReqCtx) {
     {{.PkJsonField}}s := utils.IdsStrToIdsIntGroup({{.PkJsonField}})
     {{- end }}
     p.{{.ClassName}}App.Delete({{.PkJsonField}}s)
+}
+
+// Export{{.ClassName}} 导出{{.FunctionName}}
+func (p *{{.ClassName}}Api) Export{{.ClassName}}(rc *restfulx.ReqCtx) {
+    data := entity.{{.ClassName}}{}
+
+    filename := restfulx.QueryParam(rc, "filename")
+
+	{{- range $index, $column := .Columns -}}
+
+    {{- if eq $column.IsQuery "1" -}}
+    {{- if eq $column.GoType "string"}}
+    data.{{$column.GoField}} = restfulx.QueryParam(rc, "{{$column.JsonField}}")
+    {{- else if eq $column.GoType "Time"}}
+    data.{{$column.GoField}}, _ = time.Parse(time.RFC3339, restfulx.QueryParam(rc, "{{$column.JsonField}}"))
+    data.{{$column.GoField}} = data.{{$column.GoField}}.In(time.Local)
+    {{- else if eq $column.GoType "int" }}
+    data.{{$column.GoField}} = restfulx.QueryInt(rc, "{{$column.JsonField}}", 0)
+    {{- else if eq $column.GoType "int64" }}
+    data.{{$column.GoField}} = int64(restfulx.QueryInt(rc, "{{$column.JsonField}}", 0))
+    {{- else if eq $column.GoType "uint" }}
+    data.{{$column.GoField}} = uint(restfulx.QueryInt(rc, "{{$column.JsonField}}", 0))
+    {{- else if eq $column.GoType "uint64" }}
+    data.{{$column.GoField}} = uint64(restfulx.QueryInt(rc, "{{$column.JsonField}}", 0))
+    {{- end -}}
+    {{- end -}}
+
+    {{- end }}
+
+    list := p.{{.ClassName}}App.FindList(data)
+
+	filename = utils.GetFileName(global.Conf.Server.ExcelDir, filename)
+	utils.InterfaceToExcel(*list, filename)
+	rc.Download(filename)
+}
+
+
+// Import{{.ClassName}} 导入{{.FunctionName}}
+func (p *{{.ClassName}}Api) Import{{.ClassName}}(rc *restfulx.ReqCtx) {
+	// 从请求中读取Excel文件
+	file, _, err := rc.Request.Request.FormFile("file")
+	if err != nil {
+		biz.ErrIsNil(errors.New("导入{{.FunctionName}}出现异常"), "导入{{.FunctionName}}出现异常")
+	}
+
+	// 解析Excel文件
+	xlFile, err := excelize.OpenReader(file)
+	if err != nil {
+		biz.ErrIsNil(errors.New("解析Excel文件出现异常"), "解析Excel文件出现异常")
+	}
+
+	// 遍历Excel文件中的所有行
+	rows, _ := xlFile.GetRows("Sheet1")
+	for rowIndex, row := range rows {
+		// 跳过标题行
+		if rowIndex == 0 {
+			continue
+		}
+		pkg.Log.Infoln(row)
+
+        // 创建{{.FunctionName}}对象
+        /*
+            todo 以导入岗位数据为例 需要完善下方的赋值
+            post := entity.SysPost{
+            	PostName: row[0],
+            	PostCode: row[1],
+            	Sort:     sort,
+            	Status:   row[3],
+            	Remark:   row[4],
+            }
+        */
+		data := entity.{{.ClassName}}{
+
+		}
+
+		// 保存{{.FunctionName}}对象到数据库中
+	   //p.{{.ClassName}}App.Insert(data)
+	    pkg.Log.Infoln(data)
+	}
 }

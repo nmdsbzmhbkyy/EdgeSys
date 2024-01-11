@@ -13,7 +13,6 @@ type DevGenTableColumn struct {
 	GoType           string `gorm:"go_type"           json:"goType"`  // Go类型
 	GoField          string `gorm:"go_field"          json:"goField"` // Go字段名
 	JsonField        string `gorm:"json_field;" json:"jsonField"`
-	MenuGroup        string `gorm:"menu_group"        json:"menuGroup"`
 	HtmlField        string `gorm:"html_field"        json:"htmlField"`         // html字段名
 	IsPk             string `gorm:"is_pk"             json:"isPk"`              // 是否主键（1是）
 	IsIncrement      string `gorm:"is_increment"      json:"isIncrement"`       // 是否自增（1是）

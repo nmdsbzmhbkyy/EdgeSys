@@ -219,6 +219,7 @@ func (s *toolsGenTableColumn) GenTableInit(tableName string) entity.DevGenTable 
 	}
 	data.PackageName = "system"
 	data.TplCategory = "table"
+	data.MenuGroup = "1"
 
 	// 中横线表名称，接口路径、前端文件夹名称和js名称使用
 	data.ModuleName = strings.Replace(tableName, "_", "-", -1)
@@ -365,7 +366,6 @@ func (s *toolsGenTableColumn) GenTableInit(tableName string) entity.DevGenTable 
 				data.PkGoField = column.GoField
 				data.PkGoType = column.GoType
 				data.PkJsonField = column.JsonField
-				data.MenuGroup = column.MenuGroup
 				if dbColumn[y].Extra == "auto_increment" {
 					column.IsIncrement = "1"
 				}
@@ -574,6 +574,33 @@ func GenConfigure(tableId, parentId int) {
 		CreateBy:   "admin",
 	}
 	go sysServices.SysMenuModelDao.Insert(menuD)
+
+	//导入按钮
+	menuI := sysEntity.SysMenu{
+		ParentId:   insert.MenuId,
+		MenuName:   "导入" + tab.TableComment,
+		MenuType:   "F",
+		Sort:       4,
+		Permission: fmt.Sprintf("%s:%s:import", tab.PackageName, tab.BusinessName),
+		Status:     "0",
+		MenuGroup:  tab.MenuGroup,
+		CreateBy:   "admin",
+	}
+	go sysServices.SysMenuModelDao.Insert(menuI)
+
+	//导出按钮
+	menuX := sysEntity.SysMenu{
+		ParentId:   insert.MenuId,
+		MenuName:   "导出" + tab.TableComment,
+		MenuType:   "F",
+		Sort:       5,
+		Permission: fmt.Sprintf("%s:%s:export", tab.PackageName, tab.BusinessName),
+		Status:     "0",
+		MenuGroup:  tab.MenuGroup,
+		CreateBy:   "admin",
+	}
+	go sysServices.SysMenuModelDao.Insert(menuX)
+
 	//生成api
 	apiL := sysEntity.SysApi{
 		Path:        fmt.Sprintf("/%s/%s/list", tab.PackageName, tab.BusinessName),
@@ -610,4 +637,20 @@ func GenConfigure(tableId, parentId int) {
 		Method:      "DELETE",
 	}
 	go sysServices.SysApiModelDao.Insert(apiD)
+	apiI := sysEntity.SysApi{
+		Path:        fmt.Sprintf("/%s/%s/import", tab.PackageName, tab.BusinessName),
+		Description: fmt.Sprintf("导入%s", tab.TableComment),
+		ApiGroup:    tab.BusinessName,
+		Method:      "POST",
+	}
+	go sysServices.SysApiModelDao.Insert(apiI)
+
+	apiX := sysEntity.SysApi{
+		Path:        fmt.Sprintf("/%s/%s/export", tab.PackageName, tab.BusinessName),
+		Description: fmt.Sprintf("导出%s", tab.TableComment),
+		ApiGroup:    tab.BusinessName,
+		Method:      "GET",
+	}
+	go sysServices.SysApiModelDao.Insert(apiX)
+
 }

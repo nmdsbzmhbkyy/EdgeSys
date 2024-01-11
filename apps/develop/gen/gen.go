@@ -546,6 +546,7 @@ func GenConfigure(tableId, parentId int) {
 		Sort:       1,
 		Permission: fmt.Sprintf("%s:%s:add", tab.PackageName, tab.BusinessName),
 		Status:     "0",
+		MenuGroup:  tab.MenuGroup,
 		CreateBy:   "admin",
 	}
 	go sysServices.SysMenuModelDao.Insert(menuA)
@@ -557,6 +558,7 @@ func GenConfigure(tableId, parentId int) {
 		Sort:       2,
 		Permission: fmt.Sprintf("%s:%s:edit", tab.PackageName, tab.BusinessName),
 		Status:     "0",
+		MenuGroup:  tab.MenuGroup,
 		CreateBy:   "admin",
 	}
 	go sysServices.SysMenuModelDao.Insert(menuE)
@@ -568,6 +570,7 @@ func GenConfigure(tableId, parentId int) {
 		Sort:       3,
 		Permission: fmt.Sprintf("%s:%s:delete", tab.PackageName, tab.BusinessName),
 		Status:     "0",
+		MenuGroup:  tab.MenuGroup,
 		CreateBy:   "admin",
 	}
 	go sysServices.SysMenuModelDao.Insert(menuD)

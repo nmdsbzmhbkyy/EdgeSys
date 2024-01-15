@@ -15,6 +15,14 @@ import (
     "mod.miligc.com/edge-common/CommonKit/restfulx"
     "mod.miligc.com/edge-common/CommonKit/utils"
     "mod.miligc.com/edge-common/business-common/business/pkg"
+    {{- range $index, $column := .Columns -}}
+    {{- if eq $column.IsQuery "1" -}}
+    {{- if eq $column.GoType "Time" -}}
+    {{"\n"}}
+    "time"
+    {{- end -}}
+    {{- end -}}
+    {{- end }}
 )
 
 type {{.ClassName}}Api struct {

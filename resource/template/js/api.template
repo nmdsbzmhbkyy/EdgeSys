@@ -47,7 +47,7 @@ export function del{{.FunctionName}}({{.PkJsonField}}: string) {
 // 导出{{.FunctionName}}
 export function export{{.FunctionName}}(query: any) {
 	return request({
-		url: '/{{.PackageName}}/{{.BusinessName}}/' + export,
+		url: '/{{.PackageName}}/{{.BusinessName}}/export',
 		method: 'get',
         params: query
 	})
@@ -56,7 +56,7 @@ export function export{{.FunctionName}}(query: any) {
 // 导入{{.FunctionName}}
 export function import{{.FunctionName}}(data:any) {
 	return request({
-		url: '/{{.PackageName}}/{{.BusinessName}}/' + import ,
+		url: '/{{.PackageName}}/{{.BusinessName}}/import' ,
 		method: 'post',
 		data: data
 	})

@@ -5,25 +5,25 @@
         <el-card shadow="always">
           <div class="head-container">
             <el-input
-            v-model="state.organizationName"
-            placeholder="请输入组织名称"
-            clearable
-            prefix-icon="el-icon-search"
-            style="margin-bottom: 20px"
+                v-model="state.organizationName"
+                placeholder="请输入组织名称"
+                clearable
+                prefix-icon="el-icon-search"
+                style="margin-bottom: 20px"
             />
           </div>
           <div class="head-container">
-        	<mi-tree
-        	:treeData="state.organizationOptions"
-        	:defaultProps="state.defaultProps"
-        	nodeKey="organizationId"
-        	default-expand-all
-        	:expand-on-click-node="false"
-        	@CurNode="handleNodeClick"
-        	ref="tree"
+            <mi-tree
+                :treeData="state.organizationOptions"
+                :defaultProps="state.defaultProps"
+                nodeKey="organizationId"
+                default-expand-all
+                :expand-on-click-node="false"
+                @CurNode="handleNodeClick"
+                ref="tree"
             >
             </mi-tree>
-        </div>
+          </div>
         </el-card>
       </el-col>
       <el-col :span="20" :xs="24">

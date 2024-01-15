@@ -1,0 +1,35 @@
+// ==========================================================================
+// 生成日期：2024-01-11 23:53:55 +0800 CST
+// 生成路径: temp/ac/entity/base_resident.go
+// 生成人：aurine
+// ==========================================================================
+package entity
+import (
+  "mod.miligc.com/edge-common/CommonKit/model"
+  
+  
+  "time"
+)
+
+
+type BaseResident struct {
+    Id  int64    `gorm:"primary_key;AUTO_INCREMENT" json:"id"`    // Id
+    Uuid   string   `gorm:"uuid;type:varchar(36);comment:Uuid" json:"uuid" `    // Uuid
+    ThirdId   string   `gorm:"third_id;type:varchar(64);comment:第三方id" json:"thirdId" `    // 第三方id
+    FrameUuid   string   `gorm:"frame_uuid;type:varchar(36);comment:框架id" json:"frameUuid" `    // 框架id
+    Source   string   `gorm:"source;type:varchar(5);comment:数据来源 业务系统,对接,公安" json:"source" `    // 数据来源 业务系统,对接,公安
+    PersonUuid   string   `gorm:"person_uuid;type:varchar(36);comment:人员id" json:"personUuid" `    // 人员id
+    HouseUuid   string   `gorm:"house_uuid;type:varchar(36);comment:房屋id" json:"houseUuid" `    // 房屋id
+    StartDate   time.Time   `gorm:"start_date;type:datetime;comment:入住时间" json:"startDate" binding:"required"`    // 入住时间
+    EndDate   time.Time   `gorm:"end_date;type:datetime;comment:结束时间" json:"endDate" binding:"required"`    // 结束时间
+    Type   string   `gorm:"type;type:varchar(1);comment:住户类型" json:"type" `    // 住户类型
+    Status   string   `gorm:"status;type:varchar(1);comment:添加中，已添加，添加失败" json:"status" `    // 添加中，已添加，添加失败
+    ProjectUuid   string   `gorm:"project_uuid;type:varchar(36);comment:ProjectUuid" json:"projectUuid" `    // ProjectUuid
+    CreateBy   string    `json:"createBy" gorm:"type:varchar(64);comment:创建人"`
+    UpdateBy   string    `json:"updateBy" gorm:"type:varchar(64);comment:修改人"`
+    model.BaseModel
+}
+
+func (BaseResident) TableName() string {
+	return "base_resident"
+}
